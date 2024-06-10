@@ -1,0 +1,15 @@
+:root {
+    --background-primary: #f5f5f5;
+    --background-highlight: rgb(220, 220, 220);
+
+    --text-primary: #000000;
+    --text-secondary: #8e8e93;
+}
+
+[data-theme='dark'] {
+    --background-primary: #000000;
+    --background-highlight: rgb(20, 20, 20);
+
+    --text-primary: #f2f2f7;
+    --text-secondary: #6f6f6f;
+}
