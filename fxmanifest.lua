@@ -23,3 +23,5 @@ files {
 ui_page 'ui/index.html'
 
 dependency '/assetpacks'
+
+provide 'qb-phone'
