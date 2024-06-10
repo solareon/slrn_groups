@@ -6,7 +6,7 @@ use_fxv2_oal 'yes'
 title 'slrn_groups'
 description 'A Groups app made for LB-Phone'
 author 'solareon.'
-version '1.0.0'
+version '1.0.2'
 repository 'https://github.com/solareon/slrn_groups'
 
 client_scripts {
