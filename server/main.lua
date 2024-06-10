@@ -15,6 +15,7 @@ local function exportHandler(exportName, func)
     AddEventHandler(('__cfx_export_qb-phone_%s'):format(exportName), function(setCB)
         setCB(func)
     end)
+    exports(exportName, func) -- support modern exports
 end
 
 -- Bridge
@@ -147,7 +148,7 @@ local function RemovePlayerFromGroup(src, groupID, disconnected)
             table.remove(playerGroup[groupID].members, k)
             playerGroup[groupID].Users -= 1
             playerData[src] = false
-            pNotifyGroup(groupID, 'Job Center', v.name..' Has left the group', 'fas fa-users', '#FFBF00', 7500)
+            pNotifyGroup(groupID, 'Job Center', v.name..' Has left the group')
             TriggerClientEvent('slrn_groups:client:RefreshGroupsApp', -1, playerGroup)
             if not disconnected then doNotification(src, 'You have left the group', 'primary') end
 
@@ -292,7 +293,7 @@ RegisterNetEvent('slrn_groups:server:jobcenter_JoinTheGroup', function(data)
     if playerData[src] then return doNotification(src, 'You are already a part of a group!', 'success') end
 
     local name = GetPlayerCharName(src)
-    pNotifyGroup(data.id, 'Job Center', name..' Has joined the group', 'fas fa-users', '#FFBF00', 7500)
+    pNotifyGroup(data.id, 'Job Center', name..' Has joined the group')
     playerGroup[data.id].members[#playerGroup[data.id].members+1] = {name = name, CID = player.PlayerData.citizenid, Player = src}
     playerGroup[data.id].Users += 1
     playerData[src] = true

@@ -1,5 +1,5 @@
 # slrn_groups
-A qb-phone compatible group app for [lb-phone](https://lbphone.com/)
+A qb-phone compatible group app for [lb-phone](https://lbphone.com/). This isn't great code but it works.
 
 **QB/QBOX supported with bridge**
 
@@ -18,41 +18,66 @@ Download the [release version](https://github.com/solareon/slrn_groups/release) 
 
 # Exports (server side only)
 
-```lua
-exports['qb-phone']:NotifyGroup(groupID, msg, type)
+Both `export.slrn_groups` and `exports['qb-phone']` are supported.
 
-exports['qb-phone']:pNotifyGroup(groupID, header, msg)
+```lua copy
+exports.slrn_groups:NotifyGroup(groupID, msg, type)
+```
 
-exports['qb-phone']:CreateBlipForGroup(groupID, name, data)
+```lua copy
+exports.slrn_groups:pNotifyGroup(groupID, header, msg)
+```
 
-exports['qb-phone']:RemoveBlipForGroup(groupID, name)
+```lua copy
+exports.slrn_groups:CreateBlipForGroup(groupID, name, data)
+```
 
-exports['qb-phone']:GetGroupByMembers(src)
+```lua copy
+exports.slrn_groups:RemoveBlipForGroup(groupID, name)
+```
 
-exports['qb-phone']:getGroupMembers(groupID)
+```lua copy
+exports.slrn_groups:GetGroupByMembers(src)
+```
 
-exports['qb-phone']:getGroupSize(groupID)
+```lua copy
+exports.slrn_groups:getGroupMembers(groupID)
+```
 
-exports['qb-phone']:GetGroupLeader(groupID)
+```lua copy
+exports.slrn_groups:getGroupSize(groupID)
+```
 
-exports['qb-phone']:DestroyGroup(groupID)
+```lua copy
+exports.slrn_groups:GetGroupLeader(groupID)
+```
 
-exports['qb-phone']:isGroupLeader(src, groupID)
+```lua copy
+exports.slrn_groups:DestroyGroup(groupID)
+```
 
---------------------------------------------------
+```lua copy
+exports.slrn_groups:isGroupLeader(src, groupID)
+```
 
-exports['qb-phone']:setJobStatus(groupID, status, stages)
+```lua copy
+exports.slrn_groups:setJobStatus(groupID, status, stages)
+```
 
-exports['qb-phone']:getJobStatus(groupID)
+```lua copy
+exports.slrn_groups:getJobStatus(groupID)
+```
 
-exports['qb-phone']:resetJobStatus(groupID)
+```lua copy
+exports.slrn_groups:resetJobStatus(groupID)
+```
 
---------------------------------------------------
+```lua copy
+exports.slrn_groups:isGroupTemp(groupID)
+```
 
-exports['qb-phone']:isGroupTemp(groupID)
-
-exports['qb-phone']:CreateGroup(src, name, password)
-
+```lua copy
+exports.slrn_groups:CreateGroup(src, name, password)
 ```
 
 # Copyright
