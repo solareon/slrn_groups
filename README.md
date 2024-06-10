@@ -1,5 +1,5 @@
 # slrn_groups
-A qb-phone compatible group app for [lb-phone](https://lbphone.com/). This isn't great code but it works.
+A group app for [lb-phone](https://lbphone.com/) the utilizes `qb-phone` compatiable exports. This should work with most resources that expect a `qb-phone` style group but there might be corner cases. This isn't great code but it works.
 
 **QB/QBOX supported with bridge**
 
