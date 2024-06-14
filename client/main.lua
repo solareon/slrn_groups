@@ -28,7 +28,7 @@ CreateThread(function()
             name = 'Groups',
             description = 'Group app to do stuff together',
             developer = 'solareon',
-            defaultapp = true,
+            defaultApp = true,
             ui = 'slrn_groups/ui/index.html',
             icon = 'https://cfx-nui-slrn_groups/ui/assets/icon.png'
         })
