@@ -39,10 +39,23 @@ local function pNotifyGroup(groupID, header, msg)
 end
 utils.exportHandler('pNotifyGroup', pNotifyGroup)
 
+---@class BlipData
+---@field entity number
+---@field netId number
+---@field radius number
+---@field coords vector3
+---@field color number
+---@field alpha number
+---@field sprite number
+---@field scale number
+---@field label string
+---@field route boolean
+---@field routeColor number
+
 --- Creates a blip for all members of a group
 ---@param groupID number
 ---@param name string
----@param data table
+---@param data BlipData
 local function CreateBlipForGroup(groupID, name, data)
     local group = groups[groupID]
 
