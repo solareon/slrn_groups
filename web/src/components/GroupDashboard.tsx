@@ -2,70 +2,79 @@ import React, { useState } from 'react';
 import CreateGroup from "./CreateGroup";
 import { Group } from '../types/Group';
 import { usePlayerDataStore } from '../storage/PlayerDataStore';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faUsers, faList, faTrash, faUserGroup } from '@fortawesome/free-solid-svg-icons';
+
 
 const GroupDashboard = ({ groups, createGroup }) => {
   const { playerData } = usePlayerDataStore();
   const [ showCreateGroup, setShowCreateGroup ] = useState(false);
+  const inGroup = groups.some(group => group.members.some(member => member.Player === playerData.source));
 
   return (
-    <div className="p-6 bg-neutral-400">
-      <div className="text-md font-bold text-text-primary-light dark:text-text-primary-dark">
-      Join a group or browse groups currently busy</div>
-      <button
-          onClick={() => setShowCreateGroup(true)}
-          className="px-4 py-2 m-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-        >
-          Create Group
-        </button>
-      <div className="max-w-4xl mx-auto bg-white p-4 rounded shadow-md">
-      {Object.keys(groups).map((key) => {
-        const element = groups[key];
-        let isLeader = element.leader === playerData.source;
-        let isMember = element.members.some(member => member.Player === playerData.source);
-
-        return (
-          <div key={element.id} className="jobcenter-div-job-group">
-            <div className="jobcenter-div-job-group-image">
-              <i className="fas fa-users"></i>
-            </div>
-            <div className="jobcenter-div-job-group-body-main">
-              {element.GName}
-              {isLeader ? (
-                <>
-                  <i id="jobcenter-block-grouped" data-id={element.id} data-pass={element.GPass} className="fas fa-sign-in-alt"></i>
-                  <div className="jobcenter-option-class-body">
-                    <i id="jobcenter-list-group" data-id={element.id} style={{ paddingRight: '5%' }} className="fas fa-list-ul"></i>
-                    <i id="jobcenter-delete-group" data-delete={element.id} className="fas fa-trash-alt"></i>
-                    <i style={{ paddingLeft: '5%', paddingRight: '5%' }} className="fas fa-user-friends"> {element.Users}</i>
-                  </div>
-                </>
-              ) : (
-                <div className="jobcenter-option-class-body">
-                  {isMember ? (
-                    <>
-                      <i id="jobcenter-leave-grouped" data-id={element.id} data-pass={element.GPass} className="fas fa-sign-out-alt" style={{ transform: 'rotate(180deg)' }}></i>
-                      <i id="jobcenter-list-group" data-id={element.id} style={{ paddingRight: '5%' }} className="fas fa-list-ul"></i>
-                    </>
-                  ) : (
-                    <i id="jobcenter-join-grouped" data-id={element.id} data-pass={element.GPass} className="fas fa-sign-in-alt"></i>
-                  )}
-                  <i style={{ paddingLeft: '5%', paddingRight: '5%' }} className="fas fa-user-friends">{element.Users}</i>
-                </div>
-              )}
-            </div>
+    <div className="p-2 bg-neutral-400">
+      {!inGroup && (
+        <div>
+          <div className="text-md font-bold text-text-primary-light dark:text-text-primary-dark">
+            Join a group or browse groups currently busy
           </div>
-        );
-      })}
+          <button
+            onClick={() => setShowCreateGroup(true)}
+            className="px-4 py-2 m-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+          >
+            Create Group
+          </button>
+        </div>
+      )}
+      <div className="mx-auto bg-white p-2 rounded shadow-md">
+        {Object.keys(groups).map((key) => {
+          const element = groups[key];
+          let isLeader = element.leader === playerData.source;
+          let isMember = element.members.some((member) => member.Player === playerData.source);
+
+          return (
+            <div key={element.id} className="flex flex-row grid grid-rows-2 bg-neutral-700 rounded-md m-2 p-2">
+              <div className="flex justify-start row-span-1">
+                <FontAwesomeIcon icon={faUsers} size="xl" /> &nbsp;{element.GName}
+              </div>
+              <div className="flex justify-end row-span-1">
+                {isLeader ? (
+                  <>
+                    <div className="items-center text-lg">
+                      <FontAwesomeIcon icon={faList} size="xl" className="px-1" />
+                      <FontAwesomeIcon icon={faTrash} size="xl" className="px-1" />
+                      <FontAwesomeIcon icon={faUserGroup} size="xl" className="px-1" />
+                      {element.Users}
+                    </div>
+                  </>
+                ) : (
+                  <div className="items-center text-lg">
+                    {isMember ? (
+                      <>
+                        <FontAwesomeIcon icon={faTrash} size="xl" className="px-1" />
+                        <FontAwesomeIcon icon={faUserGroup} size="xl" /> {element.Users}
+                      </>
+                    ) : (
+                      <>
+                        <FontAwesomeIcon icon={faUserGroup} size="xl" /> {element.Users}
+                      </>
+                    )}
+                  </div>
+                )}
+              </div>
+            </div>
+          );
+        })}
       </div>
       {showCreateGroup && (
-                <CreateGroup
-                    onSelect={(groupData) => {
-                        handleCreateGroup(groupData);
-                        setShowCreateGroup(false);
-                    }}
-                    onClose={() => setShowCreateGroup(false)}
-                />
-            )}
+        <CreateGroup
+          onSelect={(groupData) => {
+            createGroup(groupData);
+            setShowCreateGroup(false);
+          }}
+          onClose={() => setShowCreateGroup(false)}
+        />
+      )}
     </div>
   );
 };

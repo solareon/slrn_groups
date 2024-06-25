@@ -2,13 +2,15 @@ import React, { useState } from 'react';
 import clsx from 'clsx';
 import { useNuiEvent } from '../hooks/useNuiEvent';
 import { GroupJobStep } from '../types/GroupJobStep';
+import { useGroupJobStepStore } from '../storage/GroupJobStepStore';
 
 interface GroupJobProps {
   initialSteps: GroupJobStep[];
 }
 
-const GroupJob: React.FC<GroupJobProps> = ({ initialSteps }) => {
-  const [steps, setSteps] = useState<GroupJobStep[]>(initialSteps);
+const GroupJob: React.FC<GroupJobProps> = () => {
+  const { groupJobSteps } = useGroupJobStepStore();
+  const [steps, setSteps] = useState<GroupJobStep[]>(groupJobSteps);
 
   useNuiEvent('updateGroupJobStep', (data: { id: string; isDone: boolean }) => {
     if (!data || !data.id) {
