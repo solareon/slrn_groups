@@ -53,3 +53,20 @@ lib.callback.register('slrn_groups:server:jobcenter_JoinTheGroup', function(sour
         return 'Invalid Password'
     end
 end)
+
+lib.callback.register('slrn_groups:server:jobcenter_leave_grouped', function(source)
+    local groupID = api.GetGroupByMembers(source)
+
+    if groupID then
+        api.RemovePlayerFromGroup(source, groupID)
+
+        return 'Left Group'
+    end
+end)
+
+
+---Creates a new group
+---@param data {name: string, pass: string}
+RegisterNetEvent('slrn_groups:server:jobcenter_CreateJobGroup', function(data)
+    api.CreateGroup(source, data.name, data.pass)
+end)

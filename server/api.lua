@@ -224,13 +224,20 @@ function api.RemovePlayerFromGroup(source, groupID)
         return lib.print.error('RemovePlayerFromGroup was sent an invalid groupID :'..groupID)
     end
 
-    for i = 1, #group.members do
+
+    local memberCount = #group.members
+    for i = 1, memberCount do
         local member = group.members[i]
 
         if member.Player == source then
             table.remove(group.members, i)
 
             TriggerClientEvent('slrn_groups:client:RefreshGroupsApp', -1, groups)
+
+            -- There are no more members in the group, destroy it
+            if memberCount == 1 then
+                api.DestroyGroup(groupID)
+            end
 
             return true
         end
