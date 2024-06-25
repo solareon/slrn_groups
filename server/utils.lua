@@ -13,7 +13,7 @@ function utils.notify(src, text, type)
         description = text,
         type = type,
         duration = 5000
-    }
+    })
 end
 
 
