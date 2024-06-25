@@ -94,7 +94,7 @@ local function GetGroupByMembers(src)
             end
         end
     end
-end 
+end
 exportHandler('GetGroupByMembers', GetGroupByMembers)
 
 local function getGroupMembers(groupID)
@@ -104,20 +104,20 @@ local function getGroupMembers(groupID)
         temp[#temp+1] = v.Player
     end
     return temp
-end 
+end
 exportHandler('getGroupMembers', getGroupMembers)
 
 local function getGroupSize(groupID)
     if not groupID then return lib.print.error('getGroupSize was sent an invalid groupID :'..groupID) end
     if not playerGroup[groupID] then return lib.print.error('getGroupSize was sent an invalid groupID :'..groupID) end
     return #playerGroup[groupID].members
-end 
+end
 exportHandler('getGroupSize', getGroupSize)
 
 local function GetGroupLeader(groupID)
     if not groupID then return lib.print.error('GetGroupLeader was sent an invalid groupID :'..groupID) end
     return playerGroup[groupID].leader
-end 
+end
 exportHandler('GetGroupLeader', GetGroupLeader)
 
 local function DestroyGroup(groupID)
@@ -137,7 +137,7 @@ local function DestroyGroup(groupID)
     playerGroup[groupID] = nil
     TriggerClientEvent('slrn_groups:client:RefreshGroupsApp', -1, playerGroup)
 
-end 
+end
 exportHandler('DestroyGroup', DestroyGroup)
 
 local function RemovePlayerFromGroup(src, groupID, disconnected)
@@ -179,7 +179,7 @@ local function isGroupLeader(src, groupID)
     if not groupID then return end
     local grouplead = GetGroupLeader(groupID)
     return grouplead == src or false
-end 
+end
 exportHandler('isGroupLeader', isGroupLeader)
 
 ---- All the job functions for the groups
@@ -195,13 +195,13 @@ local function setJobStatus(groupID, status, stages)
             TriggerClientEvent('slrn_groups:client:AddGroupStage', m[i], status, stages)
         end
     end
-end 
+end
 exportHandler('setJobStatus', setJobStatus)
 
 local function getJobStatus(groupID)
     if not groupID then return lib.print.error('getJobStatus was sent an invalid groupID :'..groupID) end
     return playerGroup[groupID].status
-end 
+end
 exportHandler('getJobStatus', getJobStatus)
 
 local function resetJobStatus(groupID)
@@ -216,7 +216,7 @@ local function resetJobStatus(groupID)
             TriggerClientEvent('slrn_groups:client:RefreshGroupsApp', m[i], playerGroup, true)
         end
     end
-end 
+end
 exportHandler('resetJobStatus', resetJobStatus)
 
 AddEventHandler('playerDropped', function()
@@ -304,7 +304,7 @@ end)
 local function GetGroupStages(groupID)
     if not groupID then return lib.print.error('GetGroupStages was sent an invalid groupID :'..groupID) end
     return playerGroup[groupID].stage
-end 
+end
 exportHandler('GetGroupStages', GetGroupStages)
 
 lib.callback.register('slrn_groups:server:getAllGroups', function(source)
@@ -343,7 +343,7 @@ local function CreateGroup(src, name, password)
     playerData[src] = true
     local id = #playerGroup+1
     playerGroup[id] = {
-	id = id,
+	    id = id,
         status = 'WAITING',
         GName = name,
         GPass = password or lib.string.random('1111111'),
