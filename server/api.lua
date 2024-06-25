@@ -4,7 +4,7 @@ local utils = require 'server.utils'
 ---@type table<number, groups>
 local groups = {}
 
----Notifies all members of a group with a message
+--- Notifies all members of a group with a message
 ---@param groupID number
 ---@param msg string
 ---@param type string
@@ -21,11 +21,15 @@ local function NotifyGroup(groupID, msg, type)
 end
 utils.exportHandler('NotifyGroup', NotifyGroup)
 
+--- Notifies all members of a group with a custom notification
+---@param groupID number
+---@param header string
+---@param msg string
 local function pNotifyGroup(groupID, header, msg)
-    local group = groups?[groupID]
+    local group = groups[groupID]
 
     if not group then
-        return lib.print.error('getJobStatus was sent an invalid groupID :'..groupID)
+        return lib.print.error('pNotifyGroup was sent an invalid groupID :'..groupID)
     end
 
     lib.triggerClientEvent('slrn_groups:client:CustomNotification', group:getGroupMembers(),
@@ -35,32 +39,40 @@ local function pNotifyGroup(groupID, header, msg)
 end
 utils.exportHandler('pNotifyGroup', pNotifyGroup)
 
+--- Creates a blip for all members of a group
+---@param groupID number
+---@param name string
+---@param data table
 local function CreateBlipForGroup(groupID, name, data)
-    local group = groups?[groupID]
+    local group = groups[groupID]
 
     if not group then
-        return lib.print.error('getJobStatus was sent an invalid groupID :'..groupID)
+        return lib.print.error('CreateBlipForGroup was sent an invalid groupID :'..groupID)
     end
 
     lib.triggerClientEvent('groups:createBlip', group:getGroupMembers(), name, data)
 end
 utils.exportHandler('CreateBlipForGroup', CreateBlipForGroup)
 
+--- Removes a blip for all members of a group
+---@param groupID number
+---@param name string
 local function RemoveBlipForGroup(groupID, name)
-    local group = groups?[groupID]
+    local group = groups[groupID]
 
     if not group then
-        return lib.print.error('getJobStatus was sent an invalid groupID :'..groupID)
+        return lib.print.error('RemoveBlipForGroup was sent an invalid groupID :'..groupID)
     end
 
     lib.triggerClientEvent('slrn_groups:client:RemoveBlipForGroup', group:getGroupMembers(), name)
 end
 utils.exportHandler('RemoveBlipForGroup', RemoveBlipForGroup)
 
-
--- All group functions to get members leaders and size.
+--- Returns the group ID by member's source
+---@param src number
+---@return number?
 local function GetGroupByMembers(src)
-    if  src then
+    if src then
         for i = 1, #groups do
             for j = 1, #groups[i].members do
                 if groups[i].members[j].Player == src then
@@ -72,59 +84,55 @@ local function GetGroupByMembers(src)
 end
 utils.exportHandler('GetGroupByMembers', GetGroupByMembers)
 
-
----Returns the group members of a given group
+--- Returns the group members of a given group
 ---@param groupID number
 ---@return number[]?
 local function getGroupMembers(groupID)
-    local group = groups?[groupID]
+    local group = groups[groupID]
 
     if not group then
-        return lib.print.error('getJobStatus was sent an invalid groupID :'..groupID)
+        return lib.print.error('getGroupMembers was sent an invalid groupID :'..groupID)
     end
 
     return group:getGroupMembers()
 end
 utils.exportHandler('getGroupMembers', getGroupMembers)
 
-
----Returns the group amount of members in a given group
+--- Returns the number of members in a given group
 ---@param groupID number
 ---@return number?
 local function getGroupSize(groupID)
-    local group = groups?[groupID]
+    local group = groups[groupID]
 
     if not group then
-        return lib.print.error('getJobStatus was sent an invalid groupID :'..groupID)
+        return lib.print.error('getGroupSize was sent an invalid groupID :'..groupID)
     end
 
     return #group.members
 end
 utils.exportHandler('getGroupSize', getGroupSize)
 
-
----Returns the leader of a group
+--- Returns the leader of a group
 ---@param groupID number
 ---@return number?
 local function GetGroupLeader(groupID)
-    local group = groups?[groupID]
+    local group = groups[groupID]
 
     if not group then
-        return lib.print.error('getJobStatus was sent an invalid groupID :'..groupID)
+        return lib.print.error('GetGroupLeader was sent an invalid groupID :'..groupID)
     end
 
     return group.leader
 end
 utils.exportHandler('GetGroupLeader', GetGroupLeader)
 
-
----Destroys a group and removes it from the array
+--- Destroys a group and removes it from the array
 ---@param groupID number
 local function DestroyGroup(groupID)
-    local group = groups?[groupID]
+    local group = groups[groupID]
 
     if not group then
-        return lib.print.error('getJobStatus was sent an invalid groupID :'..groupID)
+        return lib.print.error('DestroyGroup was sent an invalid groupID :'..groupID)
     end
 
     table.remove(groups, groupID)
@@ -134,31 +142,30 @@ local function DestroyGroup(groupID)
 end
 utils.exportHandler('DestroyGroup', DestroyGroup)
 
-
----Checks if the player is the leader in the group
+--- Checks if the player is the leader in the group
 ---@param src number
 ---@param groupID number
 ---@return boolean?
 local function isGroupLeader(src, groupID)
-    local group = groups?[groupID]
+    local group = groups[groupID]
 
     if not group then
-        return lib.print.error('getJobStatus was sent an invalid groupID :'..groupID)
+        return lib.print.error('isGroupLeader was sent an invalid groupID :'..groupID)
     end
 
     return group.leader == src
 end
 utils.exportHandler('isGroupLeader', isGroupLeader)
 
----Sets the group status and stages
+--- Sets the group status and stages
 ---@param groupID number
 ---@param status 'WAITING' | 'IN_PROGRESS' | 'DONE'
 ---@param stages {id: number, name: string, isDone: boolean}[]
 local function setJobStatus(groupID, status, stages)
-    local group = groups?[groupID]
+    local group = groups[groupID]
 
     if not group then
-        return lib.print.error('getJobStatus was sent an invalid groupID :'..groupID)
+        return lib.print.error('setJobStatus was sent an invalid groupID :'..groupID)
     end
 
     group.status = status
@@ -168,12 +175,11 @@ local function setJobStatus(groupID, status, stages)
 end
 utils.exportHandler('setJobStatus', setJobStatus)
 
-
----Returns the group status
+--- Returns the group status
 ---@param groupID number
 ---@return 'WAITING' | 'IN_PROGRESS' | 'DONE' | nil
 local function getJobStatus(groupID)
-    local group = groups?[groupID]
+    local group = groups[groupID]
 
     if not group then
         return lib.print.error('getJobStatus was sent an invalid groupID :'..groupID)
@@ -183,14 +189,13 @@ local function getJobStatus(groupID)
 end
 utils.exportHandler('getJobStatus', getJobStatus)
 
-
----Resets the group status and stages
+--- Resets the group status and stages
 ---@param groupID number
 local function resetJobStatus(groupID)
-    local group = groups?[groupID]
+    local group = groups[groupID]
 
     if not group then
-        return lib.print.error('setJobStatus was sent an invalid groupID :'..groupID)
+        return lib.print.error('resetJobStatus was sent an invalid groupID :'..groupID)
     end
 
     group.status = 'WAITING'
@@ -200,12 +205,11 @@ local function resetJobStatus(groupID)
 end
 utils.exportHandler('resetJobStatus', resetJobStatus)
 
-
----Returns the group currrent Stages
+--- Returns the group current stages
 ---@param groupID number
 ---@return {id: number, name: string, isDone: boolean}[]?
 local function GetGroupStages(groupID)
-    local group = groups?[groupID]
+    local group = groups[groupID]
 
     if not group then
         return lib.print.error('GetGroupStages was sent an invalid groupID :'..groupID)
@@ -215,12 +219,11 @@ local function GetGroupStages(groupID)
 end
 utils.exportHandler('GetGroupStages', GetGroupStages)
 
-
----Returns weather or not the group is created by a script
+--- Returns whether or not the group is created by a script
 ---@param groupID number
 ---@return boolean?
 local function isGroupTemp(groupID)
-    local group = groups?[groupID]
+    local group = groups[groupID]
 
     if not group then
         return lib.print.error('isGroupTemp was sent an invalid groupID :'..groupID)
@@ -230,15 +233,13 @@ local function isGroupTemp(groupID)
 end
 utils.exportHandler('isGroupTemp', isGroupTemp)
 
-
-
----Creates a new group
+--- Creates a new group
 ---@param src number
 ---@param name string
 ---@param password string?
 ---@return number
 local function CreateGroup(src, name, password)
-    local id = #groups+1
+    local id = #groups + 1
 
     local group = group_class:new(id, name, password, src, true)
 
