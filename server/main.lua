@@ -105,31 +105,6 @@ AddEventHandler('playerDropped', function()
     end
 end)
 
-RegisterNetEvent('slrn_groups:server:jobcenter_CreateJobGroup', function(data)
-    local src = source
-    assert(src ~= nil, 'invalid source')
-
-    local player = getPlayer(src)
-    if playerData[src] then doNotification(src, 'You have already created a group', 'error') return end
-    if not data or not data.pass or not data.name then return end
-    playerData[src] = true
-    local ID = #playerGroup+1
-    playerGroup[ID] = {
-        id = ID,
-        status = 'WAITING',
-        GName = data.name,
-        GPass = data.pass,
-        Users = 1,
-        leader = src,
-        members = {
-            {name = GetPlayerCharName(src), CID = player.PlayerData.citizenid, Player = src}
-        },
-        stage = {},
-    }
-
-    TriggerClientEvent('slrn_groups:client:RefreshGroupsApp', -1, playerGroup)
-end)
-
 RegisterNetEvent('TestGroups', function()
     local src = source
     local TestTable = {
@@ -140,8 +115,6 @@ RegisterNetEvent('TestGroups', function()
 
     setJobStatus((GetGroupByMembers(src)), 'garbage', TestTable)
 end)
-
-
 
 
 lib.callback.register('slrn_groups:server:getAllGroups', function(source)
@@ -159,11 +132,3 @@ lib.callback.register('slrn_groups:server:jobcenter_CheckPlayerNames', function(
     end
     return Names
 end)
-
-
-RegisterNetEvent('slrn_groups:server:jobcenter_leave_grouped', function(data)
-    local src = source
-    if not playerData[src] then return end
-    RemovePlayerFromGroup(src, data.id)
-end)
-

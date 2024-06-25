@@ -23,7 +23,12 @@ function groups:constructor(id, name, password, leader, ScriptCreated)
     self.private.password = password or lib.string.random('1111111')
     self.leader = leader
     self.ScriptCreated = ScriptCreated
-    self.members = {}
+    self.members = {
+        {
+            name = GetPlayerName(leader),
+            Player = leader,
+        }
+    }
     self.stage = {}
     self.status = 'WAITING'
 end

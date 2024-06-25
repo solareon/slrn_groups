@@ -201,12 +201,19 @@ RegisterNetEvent('slrn_groups:client:CustomNotification', function(header, msg)
     })
 end)
 
-RegisterNUICallback('jobcenter_leave_grouped', function(data, cb)
-    if not data then return end
+RegisterNUICallback('jobcenter_leave_grouped', function(_, cb)
+
     local success = PhoneNotification('Job Center', 'Are you sure you want to leave the group?', 'Accept', 'Deny')
+
     if success then
-        TriggerServerEvent('slrn_groups:server:jobcenter_leave_grouped', data)
+        local message = lib.callback.await('slrn_groups:server:jobcenter_leave_grouped')
+
+        exports['lb-phone']:SendNotification({
+            app = identifier,
+            content = message,
+        })
     end
+
     cb('ok')
 end)
 
