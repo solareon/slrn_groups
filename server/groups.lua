@@ -81,7 +81,9 @@ end
 
 
 
-
+function groups:getPassword()
+    return self.private.password
+end
 
 
 

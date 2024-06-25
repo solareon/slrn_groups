@@ -183,7 +183,13 @@ RegisterNUICallback('onStartup', function(data, cb)
 end)
 
 RegisterNUICallback('jobcenter_JoinTheGroup', function(data, cb)
-    TriggerServerEvent('slrn_groups:server:jobcenter_JoinTheGroup', data)
+    local message = lib.callback.await('slrn_groups:server:jobcenter_JoinTheGroup')
+
+    exports['lb-phone']:SendNotification({
+        app = identifier,
+        content = message,
+    })
+
     cb('ok')
 end)
 
@@ -205,7 +211,13 @@ RegisterNUICallback('jobcenter_leave_grouped', function(data, cb)
 end)
 
 RegisterNUICallback('jobcenter_DeleteGroup', function(data, cb)
-    TriggerServerEvent('slrn_groups:server:jobcenter_DeleteGroup', data)
+    local message = lib.callback.await('slrn_groups:server:jobcenter_DeleteGroup')
+
+    exports['lb-phone']:SendNotification({
+        app = identifier,
+        content = message,
+    })
+
     cb('ok')
 end)
 
