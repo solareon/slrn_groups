@@ -3,7 +3,6 @@ export type Group = {
     status: string;
     GName: string;
     GPass: string;
-    Users: number;
     leader: number;
     members: Member[];
     stage: GroupJobStep[];

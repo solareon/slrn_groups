@@ -29,7 +29,6 @@ const GroupDashboard = ({ setCurrentPage }) => {
       status: "open",
       GName: groupData.groupName,
       GPass: groupData.password,
-      Users: 1,
       leader: playerData.source,
       members: [
         {
@@ -126,14 +125,14 @@ const GroupDashboard = ({ setCurrentPage }) => {
                 <div className="flex items-center">
                   <>
                     {isLeader || isMember ? (
-                      <div className="flex items-center">{renderIcons(isLeader, isMember, element.Users)}</div>
+                      <div className="flex items-center">{renderIcons(isLeader, isMember, element.members.length)}</div>
                     ) : (
                       <>
                         <FontAwesomeIcon
                           icon={faUserGroup}
                           className="text-white mx-1"
                         />
-                        <span>{element.Users}</span>
+                        <span className="pl-1">{element.members.length}</span>
                       </>
                     )}
                   </>
