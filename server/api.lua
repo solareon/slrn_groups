@@ -150,12 +150,52 @@ function api.DestroyGroup(groupID)
         return lib.print.error('DestroyGroup was sent an invalid groupID :'..groupID)
     end
 
+    -- If more than just the leader is in the group, notify all members that the group has been disbanded
+    if #group.members > 1 then
+        for i = 1, #group.members do
+            local source = group.members[i].Player
+
+            if source ~= group.leader then
+                utils.notify(group.members[i].Player, 'The group has been disbanded', 'error')
+            end
+        end
+    end
+
     table.remove(groups, groupID)
 
     TriggerEvent('slrn_groups:server:GroupDeleted', groupID, groups:getGroupMembers())
     TriggerClientEvent('slrn_groups:client:RefreshGroupsApp', -1, groups)
 end
 utils.exportHandler('DestroyGroup', api.DestroyGroup)
+
+function api.AddMember(groupID, source)
+    local group = groups[groupID]
+
+    if not group then
+        return lib.print.error('AddMember was sent an invalid groupID :'..groupID)
+    end
+
+    group:addMember(source)
+
+    TriggerClientEvent('slrn_groups:client:RefreshGroupsApp', -1, groups)
+end
+utils.exportHandler('AddMember', api.AddMember)
+
+---Checks if the password a user entered is the same as the group password
+---@param groupId number
+---@param password string
+---@return boolean?
+function api.isPasswordCorrect(groupId, password)
+    local group = groups?[groupId]
+
+    if not group then
+        return lib.print.error('isPasswordCorrect was sent an invalid groupID :'..groupId)
+    end
+
+    return groups:getPassword() == password
+end
+
+
 
 --- Checks if the player is the leader in the group
 ---@param src number
@@ -171,6 +211,33 @@ function api.isGroupLeader(src, groupID)
     return group.leader == src
 end
 utils.exportHandler('isGroupLeader', api.isGroupLeader)
+
+
+---Removes a player from a group
+---@param source number
+---@param groupID number
+---@return boolean?
+function api.RemovePlayerFromGroup(source, groupID)
+    local group = groups[groupID]
+
+    if not group then
+        return lib.print.error('RemovePlayerFromGroup was sent an invalid groupID :'..groupID)
+    end
+
+    for i = 1, #group.members do
+        local member = group.members[i]
+
+        if member.Player == source then
+            table.remove(group.members, i)
+
+            TriggerClientEvent('slrn_groups:client:RefreshGroupsApp', -1, groups)
+
+            return true
+        end
+    end
+
+    return false
+end
 
 --- Sets the group status and stages
 ---@param groupID number
