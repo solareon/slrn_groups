@@ -12,8 +12,9 @@ interface PlayerDataStore {
 
 export const usePlayerDataStore = create<PlayerDataStore>((set) => ({
   playerData: {
-    source: 6,
+    source: 1,
     citizenId: 'ABCD1234',
+    name: 'Testicle',
   },
   setPlayerData: (data) => set({ playerData: data }),
 }));
