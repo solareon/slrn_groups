@@ -4,11 +4,13 @@ local utils = require 'server.utils'
 ---@type table<number, groups>
 local groups = {}
 
+local api = {}
+
 --- Notifies all members of a group with a message
 ---@param groupID number
 ---@param msg string
 ---@param type string
-local function NotifyGroup(groupID, msg, type)
+function api.NotifyGroup(groupID, msg, type)
     local group = groups[groupID]
 
     if not group then
@@ -19,13 +21,13 @@ local function NotifyGroup(groupID, msg, type)
         utils.notify(group.members[i].Player, msg, type)
     end
 end
-utils.exportHandler('NotifyGroup', NotifyGroup)
+utils.exportHandler('NotifyGroup', api.NotifyGroup)
 
 --- Notifies all members of a group with a custom notification
 ---@param groupID number
 ---@param header string
 ---@param msg string
-local function pNotifyGroup(groupID, header, msg)
+function api.pNotifyGroup(groupID, header, msg)
     local group = groups[groupID]
 
     if not group then
@@ -37,7 +39,7 @@ local function pNotifyGroup(groupID, header, msg)
         msg or 'NO MSG'
     )
 end
-utils.exportHandler('pNotifyGroup', pNotifyGroup)
+utils.exportHandler('pNotifyGroup', api.pNotifyGroup)
 
 ---@class BlipData
 ---@field entity number
@@ -56,7 +58,7 @@ utils.exportHandler('pNotifyGroup', pNotifyGroup)
 ---@param groupID number
 ---@param name string
 ---@param data BlipData
-local function CreateBlipForGroup(groupID, name, data)
+function api.CreateBlipForGroup(groupID, name, data)
     local group = groups[groupID]
 
     if not group then
@@ -65,12 +67,12 @@ local function CreateBlipForGroup(groupID, name, data)
 
     lib.triggerClientEvent('groups:createBlip', group:getGroupMembers(), name, data)
 end
-utils.exportHandler('CreateBlipForGroup', CreateBlipForGroup)
+utils.exportHandler('CreateBlipForGroup', api.CreateBlipForGroup)
 
 --- Removes a blip for all members of a group
 ---@param groupID number
 ---@param name string
-local function RemoveBlipForGroup(groupID, name)
+function api.RemoveBlipForGroup(groupID, name)
     local group = groups[groupID]
 
     if not group then
@@ -79,12 +81,12 @@ local function RemoveBlipForGroup(groupID, name)
 
     lib.triggerClientEvent('slrn_groups:client:RemoveBlipForGroup', group:getGroupMembers(), name)
 end
-utils.exportHandler('RemoveBlipForGroup', RemoveBlipForGroup)
+utils.exportHandler('RemoveBlipForGroup', api.RemoveBlipForGroup)
 
 --- Returns the group ID by member's source
 ---@param src number
 ---@return number?
-local function GetGroupByMembers(src)
+function api.GetGroupByMembers(src)
     if src then
         for i = 1, #groups do
             for j = 1, #groups[i].members do
@@ -95,12 +97,12 @@ local function GetGroupByMembers(src)
         end
     end
 end
-utils.exportHandler('GetGroupByMembers', GetGroupByMembers)
+utils.exportHandler('GetGroupByMembers', api.GetGroupByMembers)
 
 --- Returns the group members of a given group
 ---@param groupID number
 ---@return number[]?
-local function getGroupMembers(groupID)
+function api.getGroupMembers(groupID)
     local group = groups[groupID]
 
     if not group then
@@ -109,12 +111,12 @@ local function getGroupMembers(groupID)
 
     return group:getGroupMembers()
 end
-utils.exportHandler('getGroupMembers', getGroupMembers)
+utils.exportHandler('getGroupMembers', api.getGroupMembers)
 
 --- Returns the number of members in a given group
 ---@param groupID number
 ---@return number?
-local function getGroupSize(groupID)
+function api.getGroupSize(groupID)
     local group = groups[groupID]
 
     if not group then
@@ -123,12 +125,12 @@ local function getGroupSize(groupID)
 
     return #group.members
 end
-utils.exportHandler('getGroupSize', getGroupSize)
+utils.exportHandler('getGroupSize', api.getGroupSize)
 
 --- Returns the leader of a group
 ---@param groupID number
 ---@return number?
-local function GetGroupLeader(groupID)
+function api.GetGroupLeader(groupID)
     local group = groups[groupID]
 
     if not group then
@@ -137,11 +139,11 @@ local function GetGroupLeader(groupID)
 
     return group.leader
 end
-utils.exportHandler('GetGroupLeader', GetGroupLeader)
+utils.exportHandler('GetGroupLeader', api.GetGroupLeader)
 
 --- Destroys a group and removes it from the array
 ---@param groupID number
-local function DestroyGroup(groupID)
+function api.DestroyGroup(groupID)
     local group = groups[groupID]
 
     if not group then
@@ -153,13 +155,13 @@ local function DestroyGroup(groupID)
     TriggerEvent('slrn_groups:server:GroupDeleted', groupID, groups:getGroupMembers())
     TriggerClientEvent('slrn_groups:client:RefreshGroupsApp', -1, groups)
 end
-utils.exportHandler('DestroyGroup', DestroyGroup)
+utils.exportHandler('DestroyGroup', api.DestroyGroup)
 
 --- Checks if the player is the leader in the group
 ---@param src number
 ---@param groupID number
 ---@return boolean?
-local function isGroupLeader(src, groupID)
+function api.isGroupLeader(src, groupID)
     local group = groups[groupID]
 
     if not group then
@@ -168,13 +170,13 @@ local function isGroupLeader(src, groupID)
 
     return group.leader == src
 end
-utils.exportHandler('isGroupLeader', isGroupLeader)
+utils.exportHandler('isGroupLeader', api.isGroupLeader)
 
 --- Sets the group status and stages
 ---@param groupID number
 ---@param status 'WAITING' | 'IN_PROGRESS' | 'DONE'
 ---@param stages {id: number, name: string, isDone: boolean}[]
-local function setJobStatus(groupID, status, stages)
+function api.setJobStatus(groupID, status, stages)
     local group = groups[groupID]
 
     if not group then
@@ -186,12 +188,12 @@ local function setJobStatus(groupID, status, stages)
 
     lib.triggerClientEvent('slrn_groups:client:AddGroupStage', group:getGroupMembers(), status, stages)
 end
-utils.exportHandler('setJobStatus', setJobStatus)
+utils.exportHandler('setJobStatus', api.setJobStatus)
 
 --- Returns the group status
 ---@param groupID number
 ---@return 'WAITING' | 'IN_PROGRESS' | 'DONE' | nil
-local function getJobStatus(groupID)
+function api.getJobStatus(groupID)
     local group = groups[groupID]
 
     if not group then
@@ -200,11 +202,11 @@ local function getJobStatus(groupID)
 
     return group.status
 end
-utils.exportHandler('getJobStatus', getJobStatus)
+utils.exportHandler('getJobStatus', api.getJobStatus)
 
 --- Resets the group status and stages
 ---@param groupID number
-local function resetJobStatus(groupID)
+function api.resetJobStatus(groupID)
     local group = groups[groupID]
 
     if not group then
@@ -216,12 +218,12 @@ local function resetJobStatus(groupID)
 
     group:refreshGroupStages()
 end
-utils.exportHandler('resetJobStatus', resetJobStatus)
+utils.exportHandler('resetJobStatus', api.resetJobStatus)
 
 --- Returns the group current stages
 ---@param groupID number
 ---@return {id: number, name: string, isDone: boolean}[]?
-local function GetGroupStages(groupID)
+function api.GetGroupStages(groupID)
     local group = groups[groupID]
 
     if not group then
@@ -230,12 +232,12 @@ local function GetGroupStages(groupID)
 
     return group.stage
 end
-utils.exportHandler('GetGroupStages', GetGroupStages)
+utils.exportHandler('GetGroupStages', api.GetGroupStages)
 
 --- Returns whether or not the group is created by a script
 ---@param groupID number
 ---@return boolean?
-local function isGroupTemp(groupID)
+function api.isGroupTemp(groupID)
     local group = groups[groupID]
 
     if not group then
@@ -244,14 +246,14 @@ local function isGroupTemp(groupID)
 
     return group.ScriptCreated or false
 end
-utils.exportHandler('isGroupTemp', isGroupTemp)
+utils.exportHandler('isGroupTemp', api.isGroupTemp)
 
 --- Creates a new group
 ---@param src number
 ---@param name string
 ---@param password string?
 ---@return number
-local function CreateGroup(src, name, password)
+function api.CreateGroup(src, name, password)
     local id = #groups + 1
 
     local group = group_class:new(id, name, password, src, true)
@@ -263,4 +265,6 @@ local function CreateGroup(src, name, password)
 
     return id
 end
-utils.exportHandler('CreateGroup', CreateGroup)
+utils.exportHandler('CreateGroup', api.CreateGroup)
+
+return api
