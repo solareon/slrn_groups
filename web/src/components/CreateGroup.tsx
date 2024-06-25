@@ -1,9 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import Tooltip from './Tooltip';
 
 const CreateGroup: React.FC<any> = ({ onSelect, onClose }) => {
   const [groupName, setGroupName] = useState('');
-
   const [disabledReason, setDisabledReason] = useState('');
   const [password, setPassword] = useState('');
   const [verifyPassword, setVerifyPassword] = useState('');
@@ -22,68 +20,71 @@ const CreateGroup: React.FC<any> = ({ onSelect, onClose }) => {
     setIsSubmitDisabled(reason !== '');
   }, [password, verifyPassword, groupName]);
 
-  // Rest of the code...
-
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // Perform other submission logic here
-    // ...
-    const groupData = {
-      groupName,
-      password,
-    };
+    const groupData = { groupName, password };
     onSelect(groupData);
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-75 flex justify-center items-center select-none">
-      <div className="bg-neutral-800 p-4 rounded-lg h-[30vh] max-h-full overflow-none">
-        <div className="flex justify-between items-center mb-2">
-          <h2 className="text-white text-xl">Create Group</h2>
-          <button onClick={onClose} className="text-white">x</button>
+    <div className='fixed inset-0 bg-black bg-opacity-75 flex justify-center items-center'>
+      <div className='bg-gray-800 p-6 rounded-lg shadow-md w-full max-w-md'>
+        <div className='flex justify-between items-center mb-4'>
+          <h2 className='text-white text-2xl'>Create Group</h2>
+          <button onClick={onClose} className='text-white text-lg'>×</button>
         </div>
         <form onSubmit={handleSubmit}>
-          <div className="mb-4">
-            <label className="text-white">Group Name</label>
+          <div className='mb-4'>
+            <label htmlFor='groupName' className='block text-white mb-2'>Group Name</label>
             <input
-              type="text"
-              id="groupName"
+              type='text'
+              id='groupName'
               value={groupName}
               onChange={(e) => setGroupName(e.target.value)}
-              className="w-full p-2 rounded bg-neutral-700 text-white"
+              className='w-full p-2 rounded bg-gray-700 text-white'
             />
           </div>
-          <div className="mb-4">
-            <label className="text-white">Password</label>
+          <div className='mb-4'>
+            <label htmlFor='password' className='block text-white mb-2'>Password</label>
             <input
-              type="password"
-              id="password"
+              type='password'
+              id='password'
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full p-2 rounded bg-neutral-700 text-white"
+              className='w-full p-2 rounded bg-gray-700 text-white'
             />
           </div>
-          <div className="mb-4">
-            <label className="text-white">Verify Password</label>
+          <div className='mb-4'>
+            <label htmlFor='verifyPassword' className='block text-white mb-2'>Verify Password</label>
             <input
-              type="password"
-              id="verifyPassword"
+              type='password'
+              id='verifyPassword'
               value={verifyPassword}
               onChange={(e) => setVerifyPassword(e.target.value)}
-              className="w-full p-2 rounded bg-neutral-700 text-white"
+              className='w-full p-2 rounded bg-gray-700 text-white'
             />
           </div>
-          <div className="flex justify-end">
-            <button type="button" onClick={onClose} className="mr-2 px-4 py-2 rounded bg-neutral-700 text-white">Cancel</button>
-              <button
-                type="submit"
-                className={`px-4 py-2 rounded text-white ${isSubmitDisabled ? 'bg-neutral-800 cursor-not-allowed' : 'bg-neutral-700 hover:bg-neutral-600'}`}
-                disabled={isSubmitDisabled}
-              >
-                Submit
-              </button>
+          <div className='flex justify-end'>
+            <button
+              type='button'
+              onClick={onClose}
+              className='mr-2 px-4 py-2 rounded bg-gray-700 text-white hover:bg-gray-600'
+            >
+              Cancel
+            </button>
+            <button
+              type='submit'
+              className={`px-4 py-2 rounded text-white ${isSubmitDisabled ? 'bg-gray-700 cursor-not-allowed' : 'bg-green-500 hover:bg-green-400'}`}
+              disabled={isSubmitDisabled}
+            >
+              Submit
+            </button>
           </div>
-          <div className="mb-4 p-2 text-red-500">{disabledReason}</div>
+          {disabledReason ? (
+            <div className='mt-4 text-red-500'>{disabledReason}</div>
+          ) : (
+            <div className='mt-4'>&nbsp;</div>
+          )}
         </form>
       </div>
     </div>
