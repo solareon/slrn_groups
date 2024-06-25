@@ -34,7 +34,7 @@ end
 function groups:addMember(source)
     -- #TODO: Get the name and CID from the bridge
     self.members[#self.members+1] = {
-        name = GetPlayerCharName(src),
+        name = GetPlayerName(source),
         CID = Player.PlayerData.citizenid,
         Player = source
     }
