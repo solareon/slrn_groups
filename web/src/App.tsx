@@ -84,22 +84,20 @@ const App = () => {
     <AppProvider>
       <button
         onClick={toggleTheme}
-        className='w-56 h-13 bg-background-highlight-light dark:bg-background-highlight-dark text-text-primary-light dark:text-text-primary-dark rounded-m'
+        className='w-full bg-background-highlight-light dark:bg-background-highlight-dark text-text-primary-light dark:text-text-primary-dark rounded-m'
       >
         Toggle Theme
       </button>
       <div
-        className='grid grid-cols-1 size-full bg-background-primary-light dark:bg-background-primary-dark font-poppins text-center gap-4'
+        className='size-full bg-background-primary-light dark:bg-background-primary-dark text-center gap-4'
         ref={appDiv}
         data-mode={theme}
       >
+        <div className='text-left text-4xl font-bold text-text-primary-light dark:text-text-primary-dark m-2 pt-2'>
+          Groups
+        </div>
         {currentPage === 'GroupDashboard' && (
           <GroupDashboard
-            setCurrentPage={setCurrentPage}
-          />
-        )}
-        {currentPage === 'PlayerList' && (
-          <PlayerList
             setCurrentPage={setCurrentPage}
           />
         )}
