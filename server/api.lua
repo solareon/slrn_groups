@@ -322,6 +322,66 @@ function api.isGroupTemp(groupID)
 end
 utils.exportHandler('isGroupTemp', api.isGroupTemp)
 
+
+---Gets all the groups thats currently running in the server
+---@return {id: number, name: string, memberCount: number}[]
+function api.GetAllGroups()
+    local data = {}
+
+    for i = 1, #groups do
+        data[i] = groups[i].getClientData()
+    end
+
+    return data
+end
+utils.exportHandler('getAllGroups', api.GetAllGroups)
+
+--- Returns the group member names
+---@param groupId number
+---@return string[]?
+function api.GetGroupMembersNames(groupId)
+    local group = groups[groupId]
+
+    if not group then
+        return lib.print.error('GetGroupMembersNames was sent an invalid groupID :'..groupId)
+    end
+
+    local names = {}
+    local amount = 0
+
+    for i = 1, #group.members do
+        amount += 1
+        names[amount] = group.members[i].name
+    end
+
+    return names
+end
+utils.exportHandler('GetGroupMembersNames', api.GetGroupMembersNames)
+
+--- Changes the leader of a group
+---@param groupID number
+---@return boolean?
+function api.ChangeGroupLeader(groupID)
+    local group = groups[groupID]
+
+    if not group then
+        return lib.print.error('ChangeGroupLeader was sent an invalid groupID :'..groupID)
+    end
+
+    local members = group.members
+
+    if #members > 1 then
+        for i = 1, #members do
+            if members[i].Player ~= group.leader then
+                group.leader = members[i].Player
+                return true
+            end
+        end
+    end
+
+    return false
+end
+
 --- Creates a new group
 ---@param src number
 ---@param name string
