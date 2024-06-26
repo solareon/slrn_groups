@@ -4,7 +4,7 @@ import { GroupJobStep } from "../types/GroupJobStep";
 
 interface GroupStore {
   currentGroups: Group[];
-  currentGroup: Group;
+  currentGroup: number | null;
   inGroup: boolean;
   setGroups: (currentGroups: Group[]) => void;
   setCurrentGroup: (currentGroup: Group) => void;

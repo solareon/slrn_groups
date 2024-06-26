@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import ConfirmationDialog from "./ConfirmationDialog";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCircle } from "@fortawesome/free-solid-svg-icons";
-import { useNuiEvent } from "../hooks/useNuiEvent";
 import { fetchReactNui } from "../utils/fetchReactNui";
 import { GroupJobStep } from "../types/GroupJobStep";
 import { useGroupJobStepStore } from "../storage/GroupJobStepStore";
@@ -36,7 +35,7 @@ const GroupJob: React.FC<GroupJobProps> = ({ setCurrentPage }) => {
   }, [currentGroups]);
 
   const handleConfirm = () => {
-    fetchReactNui("leaveGroup");
+    fetchReactNui(confirmation.type);
     setIsDialogOpen(false);
   };
 

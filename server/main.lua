@@ -2,25 +2,7 @@ local api = require 'server.api'
 
 
 
-lib.callback.register('slrn_groups:server:jobcenter_DeleteGroup', function(source)
-    local groupId = api.GetGroupByMembers(source)
-
-    if groupId then
-        if api.isGroupLeader(source, groupId) then
-            api.DestroyGroup(groupId)
-
-            return 'Group Deleted'
-        else
-            if api.RemovePlayerFromGroup(source, groupId) then
-                return 'Left Group'
-            end
-        end
-    end
-
-    return 'Error leaving group'
-end)
-
-lib.callback.reigster('slrn_groups:server:jobcenter_DeleteGroup', function(source)
+lib.callback.register('slrn_groups:server:deleteGroup', function(source)
     local groupId = api.GetGroupByMembers(source)
 
     if groupId then
@@ -41,7 +23,7 @@ end)
 ---Joins a specific group if the password is correct
 ---@param source number
 ---@param data {id: number, pass: string}
-lib.callback.register('slrn_groups:server:jobcenter_JoinTheGroup', function(source, data)
+lib.callback.register('slrn_groups:server:joinGroup', function(source, data)
     if api.isPasswordCorrect(data.id, data.pass) then
         -- #TODO: Get the name from the bridge for the Notification
         api.pNotifyGroup(data.id, 'Job Center', source..' Has joined the group')
@@ -54,7 +36,7 @@ lib.callback.register('slrn_groups:server:jobcenter_JoinTheGroup', function(sour
     end
 end)
 
-lib.callback.register('slrn_groups:server:jobcenter_leave_grouped', function(source)
+lib.callback.register('slrn_groups:server:leaveGroup', function(source)
     local groupID = api.GetGroupByMembers(source)
 
     if groupID then
@@ -67,7 +49,7 @@ end)
 
 ---Creates a new group
 ---@param data {name: string, pass: string}
-RegisterNetEvent('slrn_groups:server:jobcenter_CreateJobGroup', function(data)
+RegisterNetEvent('slrn_groups:server:createGroup', function(data)
     api.CreateGroup(source, data.name, data.pass)
 end)
 
@@ -75,11 +57,11 @@ end)
 ---Gets all the player names of the players in the group
 ---@param source number
 ---@return table?
-lib.callback.register('slrn_groups:server:jobcenter_CheckPlayerNames', function(source)
+lib.callback.register('slrn_groups:server:getGroupMembers', function(source)
     local groupId = api.GetGroupByMembers(source)
 
     if groupId then
-        return api.GetGroupMembersNames(groupId)
+        return api.getGroupMembers(groupId)
     end
 end)
 
@@ -91,7 +73,7 @@ lib.callback.register('slrn_groups:server:getAllGroups', function(source)
     local groupId = api.GetGroupByMembers(source)
 
     if groupId then
-        return api.GetAllGroups(), true, api.getJobStatus(groupId), api.GetGroupStages(groupId)
+        return api.GetAllGroups(), groupId, api.getJobStatus(groupId), api.GetGroupStages(groupId)
     else
         return api.GetAllGroups(), false
     end

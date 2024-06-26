@@ -1,13 +1,11 @@
 ---@diagnostic disable: lowercase-global
 
 local identifier = 'slrn_groups'
-local groupStage -- Stores group stage
-local finishedNotify -- store answer to leave group
 
 -- Bridge
 if GetResourceState('qbx_core') == 'started' then
     function getPlayerData()
-        return QBX.PlayerData
+        return QBX.PlayerData.citizenid
     end
 else
     local QBCore = exports['qb-core']:GetCoreObject()
@@ -29,8 +27,8 @@ CreateThread(function()
             description = 'Group app to do stuff together',
             developer = 'solareon',
             defaultApp = true,
-            ui = 'slrn_groups/ui/index.html',
-            icon = 'https://cfx-nui-slrn_groups/ui/assets/icon.png'
+            ui = 'slrn_groups/web/dist/assets/index.html',
+            icon = 'https://cfx-nui-slrn_groups/web/dist/icon.png'
         })
         if not added then
             print('Could not add app:', errorMessage)
@@ -46,7 +44,6 @@ CreateThread(function()
     end)
 end)
 
-local inJob = false
 local GroupBlips = {}
 
 local function FindBlipByName(name)
@@ -66,26 +63,6 @@ RegisterNetEvent('groups:removeBlip', function(name)
         GroupBlips[i] = nil
     end
 end)
-
-local function PhoneNotification(title, description, accept, deny)
-    exports['lb-phone']:SendCustomAppMessage(identifier, {
-        action = 'PhoneNotification',
-        PhoneNotify = {
-            title = title,
-            text = description,
-            accept = accept,
-            deny = deny,
-        },
-    })
-    finishedNotify = nil
-    local timeout = 500
-    while not finishedNotify and timeout > 0 do
-        Wait(100)
-        timeout -= 1
-    end
-    if not finishedNotify then return false end
-    return finishedNotify == 'success' or false
-end
 
 RegisterNetEvent('groups:createBlip', function(name, data)
     if not data then return print('Invalid Data was passed to the create blip event') end
@@ -130,67 +107,97 @@ RegisterNetEvent('groups:createBlip', function(name, data)
     GroupBlips[#GroupBlips + 1] = { name = name, blip = blip }
 end)
 
-RegisterNUICallback('GetGroupsApp', function(_, cb)
-    lib.callback('slrn_groups:server:getAllGroups', false, function(getGroups)
-        cb(getGroups)
-    end)
+RegisterNuiCallback('getPlayerData', function(_, cb)
+    local citizenId = getPlayerData()
+    local playerData = {
+        source = cache.serverId,
+        citizenId = citizenId
+    }
+    cb(playerData)
 end)
 
-RegisterNetEvent('slrn_groups:client:RefreshGroupsApp', function(Groups, finish)
-    if finish then inJob = false end
-    if inJob then return end
-    exports['lb-phone']:SendCustomAppMessage(identifier, {
-        action = 'refreshApp',
-        data = Groups,
-    })
-end)
-
-RegisterNetEvent('slrn_groups:client:AddGroupStage', function(status, stage)
-    inJob = true
-    groupStage = stage
-    exports['lb-phone']:SendCustomAppMessage(identifier, {
-        action = 'addGroupStage',
-        status = stage
-    })
-end)
-
-RegisterNUICallback('jobcenter_CreateJobGroup', function(data, cb)
-    TriggerServerEvent('slrn_groups:server:jobcenter_CreateJobGroup', data)
-    cb('ok')
-end)
-
-RegisterNUICallback('AnsweredNotify', function(data, cb)
-    finishedNotify = data.type
-    cb('ok')
-end)
-
-RegisterNUICallback('onStartup', function(data, cb)
-    exports['lb-phone']:SendCustomAppMessage(identifier, {
-        action = 'LoadPhoneData',
-        PlayerData = getPlayerData(),
-    })
-    if not inJob then
+RegisterNuiCallback('getGroupData', function(_, cb)
+    cb({})
+    local groups, inGroup, groupStatus, groupStages = lib.callback.await('slrn_groups:server:getAllGroups')
+    if groups then
         exports['lb-phone']:SendCustomAppMessage(identifier, {
-            action = 'LoadJobCenterApp',
-        })
-    else
-        exports['lb-phone']:SendCustomAppMessage(identifier, {
-            action = 'addGroupStage',
-            status = groupStage
+            action = 'setGroups',
+            data = groups,
         })
     end
-    cb('ok')
+    exports['lb-phone']:SendCustomAppMessage(identifier, {
+        action = 'setInGroup',
+        data = inGroup and true or false
+    })
+    exports['lb-phone']:SendCustomAppMessage(identifier, {
+        action = 'setCurrentGroup',
+        data = inGroup or nil
+    })
+    exports['lb-phone']:SendCustomAppMessage(identifier, {
+        action = 'setGroupJobSteps',
+        data = groupStages or {}
+    })
+    if groupStatus == 'IN_PROGRESS' then
+        exports['lb-phone']:SendCustomAppMessage(identifier, {
+            action = 'startJob',
+            data = {}
+        })
+    end
 end)
 
-RegisterNUICallback('jobcenter_JoinTheGroup', function(data, cb)
-    local message = lib.callback.await('slrn_groups:server:jobcenter_JoinTheGroup')
+RegisterNuiCallback('createGroup', function(data, cb)
+    TriggerServerEvent('slrn_groups:server:createGroup', data)
+    cb({})
+end)
+
+RegisterNuiCallback('joinGroup', function(data, cb)
+    local message = lib.callback.await('slrn_groups:server:joinGroup', data)
 
     exports['lb-phone']:SendNotification({
         app = identifier,
         content = message,
     })
+    cb({})
+end)
 
-    cb('ok')
+RegisterNuiCallback('leaveGroup', function(_, cb)
+    local message = lib.callback.await('slrn_groups:server:leaveGroup')
+
+    exports['lb-phone']:SendNotification({
+        app = identifier,
+        content = message,
+    })
+    cb({})
+end)
+
+RegisterNuiCallback('deleteGroup', function(_, cb)
+    local message = lib.callback.await('slrn_groups:server:deleteGroup')
+
+    exports['lb-phone']:SendNotification({
+        app = identifier,
+        content = message,
+    })
+    cb({})
+end)
+
+RegisterNUICallback('getMemberList', function(_, cb)
+    local groupNames = lib.callback.await('slrn_groups:server:getGroupMembers')
+    cb(groupNames)
+end)
+
+RegisterNetEvent('slrn_groups:client:refreshGroups', function(groupData)
+    exports['lb-phone']:SendCustomAppMessage(identifier, {
+        action = 'setGroups',
+        data = groupData,
+    })
+end)
+
+RegisterNetEvent('slrn_groups:client:updateGroupStage', function(_, stage)
+    groupStage = stage
+    exports['lb-phone']:SendCustomAppMessage(identifier, {
+        action = 'setGroupJobSteps',
+        data = stage
+    })
 end)
 
 RegisterNetEvent('slrn_groups:client:CustomNotification', function(header, msg)
@@ -200,42 +207,3 @@ RegisterNetEvent('slrn_groups:client:CustomNotification', function(header, msg)
         content = msg,
     })
 end)
-
-RegisterNUICallback('jobcenter_leave_grouped', function(_, cb)
-
-    local success = PhoneNotification('Job Center', 'Are you sure you want to leave the group?', 'Accept', 'Deny')
-
-    if success then
-        local message = lib.callback.await('slrn_groups:server:jobcenter_leave_grouped')
-
-        exports['lb-phone']:SendNotification({
-            app = identifier,
-            content = message,
-        })
-    end
-
-    cb('ok')
-end)
-
-RegisterNUICallback('jobcenter_DeleteGroup', function(data, cb)
-    local message = lib.callback.await('slrn_groups:server:jobcenter_DeleteGroup')
-
-    exports['lb-phone']:SendNotification({
-        app = identifier,
-        content = message,
-    })
-
-    cb('ok')
-end)
-
-RegisterNUICallback('jobcenter_CheckPlayerNames', function(data, cb)
-    local groupNames = lib.callback.await('slrn_groups:server:jobcenter_CheckPlayerNames')
-
-    cb(groupNames)
-end)
-
-RegisterCommand('testpass', function()
-    exports['lb-phone']:SendCustomAppMessage(identifier, {
-        action = 'testPassword'
-    })
-end, false)

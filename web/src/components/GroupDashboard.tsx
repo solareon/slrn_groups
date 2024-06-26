@@ -17,8 +17,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 
 const GroupDashboard = ({ setCurrentPage }) => {
-  const { currentGroups, currentGroup, setCurrentGroup, inGroup, setInGroup } =
-    useGroupStore();
+  const { currentGroups, currentGroup, inGroup, } = useGroupStore();
   const { playerData } = usePlayerDataStore();
   const [showCreateGroup, setShowCreateGroup] = useState(false);
   const [showPlayerList, setShowPlayerList] = useState(false);
@@ -27,13 +26,6 @@ const GroupDashboard = ({ setCurrentPage }) => {
   const [confirmation, setConfirmation] = useState({ message: null, type: null });
 
   useEffect(() => {
-    setInGroup(
-      currentGroups &&
-        currentGroups.length > 0 &&
-        currentGroups.some((group) =>
-          group.members.some((member) => member.Player === playerData.source)
-        )
-    );
     setCurrentGroup(
       currentGroups.find((group) =>
         group.members.some((member) => member.Player === playerData.source)
@@ -65,7 +57,6 @@ const GroupDashboard = ({ setCurrentPage }) => {
   const removeGroup = (groupData) => {
     setConfirmation({message: "Disband the group?", type: "removeGroup"})
     setIsDialogOpen(true);
-    // fetchReactNui("removeGroup", groupData);
     console.log(groupData);
   };
 
@@ -155,7 +146,7 @@ const GroupDashboard = ({ setCurrentPage }) => {
                 >
                   <div className="flex items-center">
                     <FontAwesomeIcon icon={faUsers} className="mr-2" />
-                    <span>{group.GName}</span>
+                    <span>{group.name}</span>
                   </div>
                   <div className="flex items-center">
                     <>
@@ -183,7 +174,7 @@ const GroupDashboard = ({ setCurrentPage }) => {
         {selectedGroup && (
           <JoinGroup
             groupId={selectedGroup.id}
-            groupName={selectedGroup.GName}
+            groupName={selectedGroup.name}
             onSelect={(groupData) => {
               joinGroup(groupData);
               setSelectedGroup(null);
