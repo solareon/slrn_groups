@@ -183,7 +183,13 @@ RegisterNUICallback('onStartup', function(data, cb)
 end)
 
 RegisterNUICallback('jobcenter_JoinTheGroup', function(data, cb)
-    TriggerServerEvent('slrn_groups:server:jobcenter_JoinTheGroup', data)
+    local message = lib.callback.await('slrn_groups:server:jobcenter_JoinTheGroup')
+
+    exports['lb-phone']:SendNotification({
+        app = identifier,
+        content = message,
+    })
+
     cb('ok')
 end)
 
@@ -195,24 +201,37 @@ RegisterNetEvent('slrn_groups:client:CustomNotification', function(header, msg)
     })
 end)
 
-RegisterNUICallback('jobcenter_leave_grouped', function(data, cb)
-    if not data then return end
+RegisterNUICallback('jobcenter_leave_grouped', function(_, cb)
+
     local success = PhoneNotification('Job Center', 'Are you sure you want to leave the group?', 'Accept', 'Deny')
+
     if success then
-        TriggerServerEvent('slrn_groups:server:jobcenter_leave_grouped', data)
+        local message = lib.callback.await('slrn_groups:server:jobcenter_leave_grouped')
+
+        exports['lb-phone']:SendNotification({
+            app = identifier,
+            content = message,
+        })
     end
+
     cb('ok')
 end)
 
 RegisterNUICallback('jobcenter_DeleteGroup', function(data, cb)
-    TriggerServerEvent('slrn_groups:server:jobcenter_DeleteGroup', data)
+    local message = lib.callback.await('slrn_groups:server:jobcenter_DeleteGroup')
+
+    exports['lb-phone']:SendNotification({
+        app = identifier,
+        content = message,
+    })
+
     cb('ok')
 end)
 
 RegisterNUICallback('jobcenter_CheckPlayerNames', function(data, cb)
-    lib.callback('slrn_groups:server:jobcenter_CheckPlayerNames', false, function(HasName)
-        cb(HasName)
-    end, data.id)
+    local groupNames = lib.callback.await('slrn_groups:server:jobcenter_CheckPlayerNames')
+
+    cb(groupNames)
 end)
 
 RegisterCommand('testpass', function()
