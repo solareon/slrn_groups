@@ -22,6 +22,7 @@ const App = () => {
     onSettingsChange,
   } = window as any;
   const [currentPage, setCurrentPage] = useState("GroupDashboard");
+  const [inGroup, setInGroup] = useState(false);
 
   useEffect(() => {
     if (devMode) {
@@ -91,10 +92,10 @@ const App = () => {
         </button>)}
         <div className="text-left text-4xl font-bold m-2 pt-2">Groups</div>
         {currentPage === "GroupDashboard" && (
-          <GroupDashboard setCurrentPage={setCurrentPage} />
+          <GroupDashboard setCurrentPage={setCurrentPage} setInGroup={setInGroup} inGroup={inGroup}/>
         )}
         {currentPage === "GroupJob" && (
-          <GroupJob setCurrentPage={setCurrentPage} />
+          <GroupJob setCurrentPage={setCurrentPage} inGroup={inGroup}/>
         )}
       </div>
       <DataHandler />

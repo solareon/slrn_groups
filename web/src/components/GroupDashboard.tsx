@@ -15,70 +15,56 @@ import {
   faRightFromBracket,
 } from "@fortawesome/free-solid-svg-icons";
 
-const GroupDashboard = ({ setCurrentPage }) => {
-  const { currentGroups, getCurrentGroups } = useGroupStore();
+const GroupDashboard = ({ setCurrentPage, setInGroup, inGroup}) => {
+  const { currentGroups, refreshGroups } = useGroupStore();
   const { playerData } = usePlayerDataStore();
-  const [ groups, setGroups ] = useState<Group[]>([]);
   const [showCreateGroup, setShowCreateGroup] = useState(false);
   const [showPlayerList, setShowPlayerList] = useState(false);
   const [selectedGroup, setSelectedGroup] = useState(null);
+  const [currentGroup, setCurrentGroup] = useState(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   useEffect(() => {
-    getCurrentGroups();
-  }, []);
+    if (currentGroups.length === 0) {
+      refreshGroups();
+    }
+  }, [])
 
   useEffect(() => {
-    setGroups(currentGroups);
-  }, [currentGroups]);
-
-  const inGroup = groups.some((group) =>
-    group.members.some((member) => member.Player === playerData.source)
-  );
+    setInGroup(currentGroups && currentGroups.length > 0 && currentGroups.some((group) =>
+      group.members.some((member) => member.Player === playerData.source)
+    ))
+    setCurrentGroup(currentGroups.find(group => group.members.some(member => member.Player === playerData.source)));
+  }, [currentGroups])
 
   const handleConfirm = () => {
-    // Add your confirm action here
+    fetchReactNui('leaveGroup')
     setIsDialogOpen(false);
   };
 
   const createGroup = (groupData) => {
     console.log(groupData);
-    const newGroup = {
-      id: groups.length + 1,
-      status: "open",
-      GName: groupData.groupName,
-      GPass: groupData.password,
-      leader: playerData.source,
-      members: [
-        {
-          name: playerData.name,
-          CID: playerData.citizenId,
-          Player: playerData.source,
-        },
-      ],
-      stage: [],
-      ScriptCreated: false,
-    };
-    console.log(newGroup);
-    setGroups([...groups, newGroup]);
+    fetchReactNui('createGroup', groupData)
   };
 
   const joinGroup = (groupData) => {
+    fetchReactNui('joinGroup', groupData)
     console.log(groupData);
   };
 
   const leaveGroup = () => {
-    console.log("Leaving current group");
     setIsDialogOpen(true);
   };
 
   const removeGroup = (groupData) => {
+    fetchReactNui('removeGroup', groupData)
     console.log(groupData);
   };
 
-  const renderIcons = (isLeader, isMember, element) => {
+  const renderIcons = (isLeader, isMember, group) => {
     return (
       <>
+      <div className="flex items-center">
         <FontAwesomeIcon
           icon={faList}
           className="mx-1 hover:text-background"
@@ -88,16 +74,17 @@ const GroupDashboard = ({ setCurrentPage }) => {
           <FontAwesomeIcon
             icon={faTrash}
             className="mx-1 hover:text-danger"
-            onClick={() => removeGroup(element)}
+            onClick={() => removeGroup(group)}
           />
         )}
         {isMember && !isLeader && (
           <FontAwesomeIcon
             icon={faRightFromBracket}
             className="mx-1 hover:text-danger"
-            onClick={() => leaveGroup(element)}
+            onClick={() => leaveGroup(group)}
           />
         )}
+      </div>
       </>
     );
   };
@@ -131,49 +118,50 @@ const GroupDashboard = ({ setCurrentPage }) => {
             Leave Group
           </button>
         </div>
-        <h2 className="mb-4">Create a group or join an existing group below</h2>
-        <div className="bg-secondary p-4 rounded-lg shadow-inner">
-          {Object.keys(groups).map((key) => {
-            const element = groups[key];
-            let isLeader = element.leader === playerData.source;
-            let isMember = element.members.some(
-              (member) => member.Player === playerData.source
-            );
+        {currentGroups?.length > 0 ? (
+          <h2 className="mb-4">Create a group or join an existing group below</h2>
+        ) : (
+          <h2 className="mb-4">Create a group to get started</h2>
+        )}
+        {currentGroups && currentGroups.length > 0 && (
+          <div className="bg-secondary p-4 rounded-lg shadow-inner">
+            {currentGroups.map((group) => {
+              let isLeader = group.leader === playerData.source;
+              let isMember = group.members.some(
+                (member) => member.Player === playerData.source
+              );
+              if (isMember === true) {}
 
-            return (
-              <div
-                key={element.id}
-                className={`flex justify-between items-center p-3 mb-2 rounded-md ${
-                  !inGroup && "hover:bg-accent"
-                }`}
-                onClick={() => {
-                  if (!inGroup) {
-                    setSelectedGroup(element);
-                  }
-                }}
-              >
-                <div className="flex items-center">
-                  <FontAwesomeIcon icon={faUsers} className="mr-2" />
-                  <span>{element.GName}</span>
+              return (
+                <div
+                  key={group.id}
+                  className={`flex justify-between items-center p-3 mb-2 rounded-md ${
+                    !inGroup && "hover:bg-accent"
+                  }`}
+                  onClick={() => {
+                    if (!inGroup) {
+                      setSelectedGroup(group);
+                    }
+                  }}
+                >
+                  <div className="flex items-center">
+                    <FontAwesomeIcon icon={faUsers} className="mr-2" />
+                    <span>{group.GName}</span>
+                  </div>
+                  <div className="flex items-center">
+                    <>
+                      {isMember && (renderIcons(isLeader, isMember, group))}
+                      <FontAwesomeIcon icon={faUserGroup} className="" />
+                      <span className="mx-2 font-semibold">
+                        {group.members.length}
+                      </span>
+                    </>
+                  </div>
                 </div>
-                <div className="flex items-center">
-                  <>
-                    {isLeader ||
-                      (isMember && (
-                        <div className="flex items-center">
-                          {renderIcons(isLeader, isMember, element)}
-                        </div>
-                      ))}
-                    <FontAwesomeIcon icon={faUserGroup} className="" />
-                    <span className="mx-2 font-semibold">
-                      {element.members.length}
-                    </span>
-                  </>
-                </div>
-              </div>
-            );
-          })}
-        </div>
+              );
+            })}
+          </div>
+        )}
         {showCreateGroup && (
           <CreateGroup
             onSelect={(groupData) => {
@@ -197,7 +185,7 @@ const GroupDashboard = ({ setCurrentPage }) => {
           />
         )}
         {showPlayerList && (
-          <PlayerList onClose={() => setShowPlayerList(false)} />
+          <PlayerList onClose={() => setShowPlayerList(false)} currentGroup={currentGroup}/>
         )}
         {isDialogOpen && (
           <ConfirmationDialog

@@ -3,6 +3,7 @@ import ConfirmationDialog from "./ConfirmationDialog";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCircle } from "@fortawesome/free-solid-svg-icons";
 import { useNuiEvent } from "../hooks/useNuiEvent";
+import { fetchReactNui } from "../utils/fetchReactNui";
 import { GroupJobStep } from "../types/GroupJobStep";
 import { useGroupJobStepStore } from "../storage/GroupJobStepStore";
 import { useGroupStore } from "../storage/GroupStore";
@@ -12,7 +13,7 @@ interface GroupJobProps {
   initialSteps: GroupJobStep[];
 }
 
-const GroupJob: React.FC<GroupJobProps> = ({ setCurrentPage }) => {
+const GroupJob: React.FC<GroupJobProps> = ({ setCurrentPage, inGroup }) => {
   const { groups } = useGroupStore();
   const { playerData } = usePlayerDataStore();
   const { groupJobSteps, getGroupJobSteps } = useGroupJobStepStore();
@@ -27,12 +28,8 @@ const GroupJob: React.FC<GroupJobProps> = ({ setCurrentPage }) => {
     setSteps(groupJobSteps);
   }, [groupJobSteps]);
 
-  const inGroup = groups.some((group) =>
-    group.members.some((member) => member.Player === playerData.source)
-  );
-
   const handleConfirm = () => {
-    // Add your confirm action here
+    fetchReactNui('leaveGroup')
     setIsDialogOpen(false);
   };
 
