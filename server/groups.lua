@@ -63,8 +63,8 @@ function groups:refreshGroupStages()
         if self.members[i] then
             local source = self.members[i].Player
 
-            TriggerClientEvent('slrn_groups:client:AddGroupStage', source, self.status, self.stage)
-            TriggerClientEvent('slrn_groups:client:RefreshGroupsApp', source, self:getClientData(), true)
+            TriggerClientEvent('slrn_groups:client:updateGroupStage', source, self.status, self.stage)
+            TriggerClientEvent('slrn_groups:client:refreshGroups', source, self:getClientData(), true)
         end
     end
 end

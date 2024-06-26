@@ -163,8 +163,8 @@ function api.DestroyGroup(groupID)
 
     table.remove(groups, groupID)
 
-    TriggerEvent('slrn_groups:server:GroupDeleted', groupID, groups:getGroupMembers())
-    TriggerClientEvent('slrn_groups:client:RefreshGroupsApp', -1, groups)
+    TriggerEvent('slrn_groups:server:GroupDeleted', groupID, group:getGroupMembers())
+    lib.TriggerClientEvent('slrn_groups:client:refreshGroups', -1, api.GetAllGroups())
 end
 utils.exportHandler('DestroyGroup', api.DestroyGroup)
 
@@ -177,7 +177,7 @@ function api.AddMember(groupID, source)
 
     group:addMember(source)
 
-    TriggerClientEvent('slrn_groups:client:RefreshGroupsApp', -1, groups)
+    lib.TriggerClientEvent('slrn_groups:client:refreshGroups', -1, api.GetAllGroups())
 end
 utils.exportHandler('AddMember', api.AddMember)
 
@@ -232,7 +232,7 @@ function api.RemovePlayerFromGroup(source, groupID)
         if member.Player == source then
             table.remove(group.members, i)
 
-            TriggerClientEvent('slrn_groups:client:RefreshGroupsApp', -1, groups)
+            lib.TriggerClientEvent('slrn_groups:client:refreshGroups', -1, api.GetAllGroups())
 
             -- There are no more members in the group, destroy it
             if memberCount == 1 then
@@ -260,7 +260,7 @@ function api.setJobStatus(groupID, status, stages)
     group.status = status
     group.stage = stages
 
-    lib.triggerClientEvent('slrn_groups:client:AddGroupStage', group:getGroupMembers(), status, stages)
+    lib.triggerClientEvent('slrn_groups:client:updateGroupStage', group:getGroupMembers(), status, stages)
 end
 utils.exportHandler('setJobStatus', api.setJobStatus)
 
@@ -329,7 +329,7 @@ function api.GetAllGroups()
     local data = {}
 
     for i = 1, #groups do
-        data[i] = groups[i].getClientData()
+        data[i] = groups[i]:getClientData()
     end
 
     return data
@@ -346,15 +346,18 @@ function api.GetGroupMembersNames(groupId)
         return lib.print.error('GetGroupMembersNames was sent an invalid groupID :'..groupId)
     end
 
-    local names = {}
+    local members = {}
     local amount = 0
 
     for i = 1, #group.members do
         amount += 1
-        names[amount] = group.members[i].name
+        local member = {}
+        member.name = group.members[i].name
+        member.Player = group.members[i].Player
+        members[amount] = member
     end
 
-    return names
+    return members
 end
 utils.exportHandler('GetGroupMembersNames', api.GetGroupMembersNames)
 
@@ -395,7 +398,7 @@ function api.CreateGroup(src, name, password)
     groups[id] = group
 
     -- Send non-sensitive data to all clients (id, name, memberCount)
-    TriggerClientEvent('slrn_groups:client:RefreshGroupsApp', -1, group.getClientData())
+    lib.TriggerClientEvent('slrn_groups:client:refreshGroups', -1, api.GetAllGroups())
 
     return id
 end
