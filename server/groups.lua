@@ -82,10 +82,8 @@ function groups:getGroupMembers()
     return members
 end
 
-
-
-
-
+---Gets the password of a group
+---@return string
 function groups:getPassword()
     return self.private.password
 end
