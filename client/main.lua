@@ -229,9 +229,9 @@ RegisterNUICallback('jobcenter_DeleteGroup', function(data, cb)
 end)
 
 RegisterNUICallback('jobcenter_CheckPlayerNames', function(data, cb)
-    lib.callback('slrn_groups:server:jobcenter_CheckPlayerNames', false, function(HasName)
-        cb(HasName)
-    end, data.id)
+    local groupNames = lib.callback.await('slrn_groups:server:jobcenter_CheckPlayerNames')
+
+    cb(groupNames)
 end)
 
 RegisterCommand('testpass', function()

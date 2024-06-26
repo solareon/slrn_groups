@@ -70,3 +70,46 @@ end)
 RegisterNetEvent('slrn_groups:server:jobcenter_CreateJobGroup', function(data)
     api.CreateGroup(source, data.name, data.pass)
 end)
+
+
+---Gets all the player names of the players in the group
+---@param source number
+---@return table?
+lib.callback.register('slrn_groups:server:jobcenter_CheckPlayerNames', function(source)
+    local groupId = api.GetGroupByMembers(source)
+
+    if groupId then
+        return api.GetGroupMembersNames(groupId)
+    end
+end)
+
+
+
+---Get all groups
+---@param source number
+lib.callback.register('slrn_groups:server:getAllGroups', function(source)
+    local groupId = api.GetGroupByMembers(source)
+
+    if groupId then
+        return api.GetAllGroups(), true, api.getJobStatus(groupId), api.GetGroupStages(groupId)
+    else
+        return api.GetAllGroups(), false
+    end
+end)
+
+
+AddEventHandler('playerDropped', function()
+    local groupId = api.GetGroupByMembers(source)
+
+    if groupId then
+        if api.isGroupLeader(source, groupId) then
+            if api.ChangeGroupLeader(groupId) then
+                api.RemovePlayerFromGroup(source, groupId)
+            else
+                api.DestroyGroup(groupId)
+            end
+        else
+            api.RemovePlayerFromGroup(source, groupId)
+        end
+    end
+end)
