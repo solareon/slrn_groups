@@ -1,5 +1,6 @@
 import React from "react";
 import { useNuiEvent } from "../hooks/useNuiEvent";
+import { fetchReactNui } from "../utils/fetchReactNui";
 import { usePlayerDataStore } from "../storage/PlayerDataStore";
 import { useGroupStore } from "../storage/GroupStore";
 import { useGroupJobStepStore } from "../storage/GroupJobStepStore";
@@ -7,7 +8,7 @@ import { useGroupJobStepStore } from "../storage/GroupJobStepStore";
 const DataHandler: React.FC = () => {
   const { setPlayerData } = usePlayerDataStore();
   const { setGroups } = useGroupStore();
-  const { groupJobSteps, setGroupJobSteps } = useGroupJobStepStore();
+  const { setGroupJobSteps } = useGroupJobStepStore();
 
   useNuiEvent("setPlayerData", setPlayerData);
   useNuiEvent("setGroups", setGroups);

@@ -13,24 +13,36 @@ interface GroupJobProps {
   initialSteps: GroupJobStep[];
 }
 
-const GroupJob: React.FC<GroupJobProps> = ({ setCurrentPage, inGroup }) => {
-  const { groups } = useGroupStore();
+const GroupJob: React.FC<GroupJobProps> = ({ setCurrentPage }) => {
+  const { currentGroups, currentGroup, setCurrentGroup, inGroup, setInGroup } = useGroupStore();
   const { playerData } = usePlayerDataStore();
-  const { groupJobSteps, getGroupJobSteps } = useGroupJobStepStore();
-  const [steps, setSteps] = useState<GroupJobStep[]>([]);
+  const { groupJobSteps } = useGroupJobStepStore();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [confirmation, setConfirmation] = useState({ message: null, type: null });
 
   useEffect(() => {
-    getGroupJobSteps();
-  }, []);
-
-  useEffect(() => {
-    setSteps(groupJobSteps);
-  }, [groupJobSteps]);
+    setInGroup(
+      currentGroups &&
+        currentGroups.length > 0 &&
+        currentGroups.some((group) =>
+          group.members.some((member) => member.Player === playerData.source)
+        )
+    );
+    setCurrentGroup(
+      currentGroups.find((group) =>
+        group.members.some((member) => member.Player === playerData.source)
+      )
+    );
+  }, [currentGroups]);
 
   const handleConfirm = () => {
-    fetchReactNui('leaveGroup')
+    fetchReactNui("leaveGroup");
     setIsDialogOpen(false);
+  };
+
+  const leaveGroup = () => {
+    setConfirmation({message: "Leave the group?", type: "leaveGroup"})
+    setIsDialogOpen(true);
   };
 
   return (
@@ -45,21 +57,21 @@ const GroupJob: React.FC<GroupJobProps> = ({ setCurrentPage, inGroup }) => {
             Show Groups
           </button>
           <button
-            onClick={() => setIsDialogOpen(true)}
+            onClick={() => leaveGroup()}
             className={`px-4 py-2 w-1/2 bg-primary rounded
               ${!inGroup ? "cursor-not-allowed" : "hover:bg-danger"}`}
           >
             Leave Group
           </button>
         </div>
-        {steps.length > 0 ? (
+        {groupJobSteps.length > 0 ? (
           <h2 className="mb-4">Here are the current group tasks</h2>
         ) : (
           <h2 className="mb-4">No tasks available</h2>
         )}
         <div className="w-full p-2">
           <div className="relative border-l border-accent ml-4 pl-4">
-            {steps.map((step) => (
+            {groupJobSteps.map((step) => (
               <div key={step.id} className="mb-6 flex items-center">
                 <span className="absolute left-0 transform -translate-x-1/2 bg-background border border-accent w-6 h-6 rounded-full flex items-center justify-center">
                   <FontAwesomeIcon
@@ -81,6 +93,7 @@ const GroupJob: React.FC<GroupJobProps> = ({ setCurrentPage, inGroup }) => {
           <ConfirmationDialog
             onClose={() => setIsDialogOpen(false)}
             onConfirm={handleConfirm}
+            confirmation={confirmation}
           />
         )}
       </div>

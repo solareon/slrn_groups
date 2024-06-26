@@ -1,16 +1,22 @@
 import React, { useContext } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faUser, faTrash } from '@fortawesome/free-solid-svg-icons';
+import { faUser, faTrash, faCrown } from '@fortawesome/free-solid-svg-icons';
 import { usePlayerDataStore } from '../storage/PlayerDataStore';
+import { useGroupStore } from '../storage/GroupStore';
 
-const PlayerList: React.FC = ({ onClose, currentGroup }) => {
+const PlayerList: React.FC = ({ onClose }) => {
   const { playerData } = usePlayerDataStore();
+  const { currentGroup } = useGroupStore();
 
   const removeGroupMember = (member) => {
     console.log('Remove Member', member);
   };
 
-  const isLeader = currentGroup.members.find(member => member.Player === playerData.source).isLeader;
+  const promoteGroupMember = (member) => {
+    console.log('Promote Member', member);
+  }
+
+  const isLeader = currentGroup.members.find(member => member.Player === playerData.source) && true;
 
   return (
     <div className='fixed inset-0 bg-black bg-opacity-75 flex justify-center items-center'>
@@ -28,13 +34,20 @@ const PlayerList: React.FC = ({ onClose, currentGroup }) => {
               >
                 <FontAwesomeIcon icon={faUser} className='' />
                 <>
-                { (isLeader && member.Player !== playerData.source) &&
-                  <FontAwesomeIcon
-                    icon={faTrash}
-                    className='self-right hover:text-danger'
-                    onClick={() => removeGroupMember(member)}
-                  />
-                }
+                { (isLeader && member.Player !== playerData.source) && (
+                  <>
+                    <FontAwesomeIcon
+                      icon={faTrash}
+                      className='self-right hover:text-danger'
+                      onClick={() => removeGroupMember(member)}
+                    />
+                    <FontAwesomeIcon
+                      icon={faCrown}
+                      className='self-right hover:text-success'
+                      onClick={() => promoteGroupMember(member)}
+                    />
+                  </>
+                )}
                 </>
                 <span className=''>{member.name}</span>
               </div>
