@@ -5,13 +5,15 @@ import { GroupJobStep } from "../types/GroupJobStep";
 
 interface GroupStore {
   currentGroups: Group[];
-  getCurrentGroups: () => void;
+  inGroup: boolean;
+  refreshGroups: () => void;
   setGroups: (currentGroups: Group[]) => void;
 }
 
 export const useGroupStore = create<GroupStore>((set) => ({
-  getCurrentGroups: async () => {
-    const currentGroups = await fetchReactNui<Group[]>("getCurrentGroups", {}, [
+  currentGroups: [],
+  refreshGroups: async () => {
+    const currentGroups = await fetchReactNui<Group[]>("refreshGroups", {}, [
       {
         id: 1,
         status: "open",
@@ -43,7 +45,7 @@ export const useGroupStore = create<GroupStore>((set) => ({
         GPass: "password",
         leader: 3,
         members: [
-          { name: "Larry", CID: "ABCD1234", Player: 1 },
+          { name: "Larry", CID: "ABCD1234", Player: 2 },
           { name: "Barry", CID: "EFGH5678", Player: 3 },
         ],
         stage: [],
@@ -60,7 +62,8 @@ export const useGroupStore = create<GroupStore>((set) => ({
         ScriptCreated: false,
       },
     ]);
-    set({ currentGroups });
+    set({ currentGroups }, true);
+    console.log("Fetched groups");
   },
   setGroups: (currentGroups) => set({ currentGroups }),
 }));

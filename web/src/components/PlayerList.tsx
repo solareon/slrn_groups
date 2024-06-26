@@ -2,19 +2,15 @@ import React, { useContext } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUser, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { usePlayerDataStore } from '../storage/PlayerDataStore';
-import { useGroupStore } from '../storage/GroupStore';
 
-const PlayerList: React.FC = ({ onClose }) => {
+const PlayerList: React.FC = ({ onClose, currentGroup }) => {
   const { playerData } = usePlayerDataStore();
-  const { groups, setGroups } = useGroupStore();
-  const currentGroup = groups.find((group) =>
-    group.members.some((member) => member.Player === playerData.source)
-  );
-  const isLeader = currentGroup.leader === playerData.source;
 
   const removeGroupMember = (member) => {
     console.log('Remove Member', member);
   };
+
+  const isLeader = currentGroup.members.find(member => member.Player === playerData.source).isLeader;
 
   return (
     <div className='fixed inset-0 bg-black bg-opacity-75 flex justify-center items-center'>
@@ -32,7 +28,7 @@ const PlayerList: React.FC = ({ onClose }) => {
               >
                 <FontAwesomeIcon icon={faUser} className='' />
                 <>
-                { isLeader && member.Player !== playerData.source &&
+                { (isLeader && member.Player !== playerData.source) &&
                   <FontAwesomeIcon
                     icon={faTrash}
                     className='self-right hover:text-danger'
