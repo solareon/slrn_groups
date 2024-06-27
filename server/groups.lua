@@ -90,6 +90,18 @@ end
 
 
 
+---Triggers an event for all members of the group. (Stolen from ox_lib so thanks to the original author)
+---@param eventName string
+---@param ... any
+function groups:triggerGroupEvent(eventName, ...)
+    local payload = msgpack.pack_args(...)
+    local payloadLen = #payload
+
+    for i = 1, #self.members do
+        TriggerClientEventInternal(eventName, self.members[i].Player --[[@as string]], payload, payloadLen)
+    end
+end
+
 
 
 

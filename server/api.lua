@@ -34,12 +34,24 @@ function api.pNotifyGroup(groupID, header, msg)
         return lib.print.error('pNotifyGroup was sent an invalid groupID :'..groupID)
     end
 
-    lib.triggerClientEvent('slrn_groups:client:CustomNotification', group:getGroupMembers(),
-        header or 'NO HEADER',
-        msg or 'NO MSG'
-    )
+    group:triggerGroupEvent('slrn_groups:client:CustomNotification', header or 'NO HEADER', msg or 'NO MSG')
 end
 utils.exportHandler('pNotifyGroup', api.pNotifyGroup)
+
+---Triggers a client event for each member of a group (stolen from ox_lib)
+---@param eventName string
+---@param groupId number
+---@param ... any
+function api.triggerGroupEvent(eventName, groupId, ...)
+    local group = groups[groupId]
+
+    if not group then
+        return lib.print.error('triggerGroupEvent was sent an invalid groupID :'..groupId)
+    end
+
+    group:triggerGroupEvent(eventName, ...)
+end
+utils.exportHandler('triggerGroupEvent', api.triggerGroupEvent)
 
 ---@class BlipData
 ---@field entity number?
@@ -65,7 +77,7 @@ function api.CreateBlipForGroup(groupID, name, data)
         return lib.print.error('CreateBlipForGroup was sent an invalid groupID :'..groupID)
     end
 
-    lib.triggerClientEvent('groups:createBlip', group:getGroupMembers(), name, data)
+    group:triggerGroupEvent('groups:createBlip', name, data)
 end
 utils.exportHandler('CreateBlipForGroup', api.CreateBlipForGroup)
 
@@ -79,7 +91,7 @@ function api.RemoveBlipForGroup(groupID, name)
         return lib.print.error('RemoveBlipForGroup was sent an invalid groupID :'..groupID)
     end
 
-    lib.triggerClientEvent('slrn_groups:client:RemoveBlipForGroup', group:getGroupMembers(), name)
+    group:triggerGroupEvent('groups:removeBlip', name)
 end
 utils.exportHandler('RemoveBlipForGroup', api.RemoveBlipForGroup)
 
@@ -260,7 +272,7 @@ function api.setJobStatus(groupID, status, stages)
     group.status = status
     group.stage = stages
 
-    lib.triggerClientEvent('slrn_groups:client:updateGroupStage', group:getGroupMembers(), status, stages)
+    group:triggerGroupEvent('slrn_groups:client:updateGroupStage', status, stages)
 end
 utils.exportHandler('setJobStatus', api.setJobStatus)
 
