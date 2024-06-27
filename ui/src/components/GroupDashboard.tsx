@@ -4,7 +4,6 @@ import JoinGroup from "./JoinGroup";
 import PlayerList from "./PlayerList";
 import ConfirmationDialog from "./ConfirmationDialog";
 import { Group } from "../types/Group";
-import { fetchReactNui } from "../utils/fetchReactNui";
 import { usePlayerDataStore } from "../storage/PlayerDataStore";
 import { useGroupStore } from "../storage/GroupStore";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -16,7 +15,7 @@ import {
   faRightFromBracket,
 } from "@fortawesome/free-solid-svg-icons";
 
-const GroupDashboard = ({ setCurrentPage }) => {
+const GroupDashboard = ({ setCurrentPage, fetchNui }) => {
   const { currentGroups, currentGroup, inGroup, } = useGroupStore();
   const { playerData } = usePlayerDataStore();
   const [showCreateGroup, setShowCreateGroup] = useState(false);
@@ -26,26 +25,22 @@ const GroupDashboard = ({ setCurrentPage }) => {
   const [confirmation, setConfirmation] = useState({ message: null, type: null });
 
   useEffect(() => {
-    setCurrentGroup(
-      currentGroups.find((group) =>
-        group.members.some((member) => member.Player === playerData.source)
-      )
-    );
+      fetchNui('getMemberList').then((data) => setCurrentGroup(data));
   }, [currentGroups]);
 
   const handleConfirm = () => {
-    fetchReactNui(confirmation.type, {}, {});
+    fetchNui(confirmation.type);
     console.log(confirmation);
     setIsDialogOpen(false);
   };
 
   const createGroup = (groupData) => {
     console.log(groupData);
-    fetchReactNui("createGroup", groupData);
+    fetchNui("createGroup", {name: groupData.groupName, pass: groupData.password});
   };
 
   const joinGroup = (groupData) => {
-    fetchReactNui("joinGroup", groupData);
+    fetchNui("joinGroup", {groupData});
     console.log(groupData);
   };
 
@@ -128,9 +123,10 @@ const GroupDashboard = ({ setCurrentPage }) => {
           <div className="bg-secondary p-4 rounded-lg shadow-inner">
             {currentGroups.map((group) => {
               let isLeader = group.leader === playerData.source;
-              let isMember = group.members.some(
-                (member) => member.Player === playerData.source
-              );
+              // let isMember = group.members.some(
+              //   (member) => member.Player === playerData.source
+              // );
+              let isMember = true;
 
               return (
                 <div
@@ -153,7 +149,7 @@ const GroupDashboard = ({ setCurrentPage }) => {
                       {isMember && renderIcons(isLeader, isMember, group)}
                       <FontAwesomeIcon icon={faUserGroup} className="" />
                       <span className="mx-2 font-semibold">
-                        {group.members.length}
+                        {group.membercount}
                       </span>
                     </>
                   </div>
@@ -187,6 +183,7 @@ const GroupDashboard = ({ setCurrentPage }) => {
         {showPlayerList && (
           <PlayerList
             onClose={() => setShowPlayerList(false)}
+            fetchNui={fetchNui}
             currentGroup={currentGroup}
           />
         )}

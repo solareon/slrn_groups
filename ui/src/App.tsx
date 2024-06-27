@@ -6,7 +6,6 @@ import DataHandler from "./components/DataHandler";
 import { GroupJobStep } from "./types/GroupJobStep";
 import { Group } from "./types/Group";
 import { useNuiEvent } from "./hooks/useNuiEvent";
-import { fetchReactNui } from "./utils/fetchReactNui";
 import { useGroupJobStepStore } from "./storage/GroupJobStepStore";
 import { useGroupStore } from "./storage/GroupStore";
 import { usePlayerDataStore } from "./storage/PlayerDataStore";
@@ -42,35 +41,12 @@ const App = () => {
   }, [theme]);
 
   useEffect(() => {
-    fetchReactNui("getPlayerData", {}, {
-      source: 1,
-      citizenId: 'ABCD1234',
-    }).then((data) => {
+    fetchNui("getPlayerData").then((data) => {
       setPlayerData(data);
     });
 
-    fetchReactNui<Group[]>("getGroupData", {}, [
-      {
-        id: 1,
-        name: "Group 1",
-        memberCount: 1,
-      },
-      {
-        id: 2,
-        name: "Group 2",
-        memberCount: 2,
-      },
-      {
-        id: 3,
-        name: "Group 3",
-        memberCount: 3,
-      },
-      {
-        id: 4,
-        name: "Group 4",
-        memberCount: 4,
-      }
-    ]).then((data) => setGroups(data));
+    fetchNui<Group[]>("getGroupData").then((data) => setGroups(data));
+    // fetchNui<Group[]>("getGroupData").then(() => void);
   }, []);
 
   useEffect(() => {
@@ -139,7 +115,7 @@ const App = () => {
         <div className="text-left text-4xl font-bold m-2 pt-2">Groups</div>
         {currentPage === "GroupDashboard" && (
           <GroupDashboard
-            setCurrentPage={setCurrentPage}
+            setCurrentPage={setCurrentPage} fetchNui={fetchNui}
           />
         )}
         {currentPage === "GroupJob" && (

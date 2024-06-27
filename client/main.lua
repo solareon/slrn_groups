@@ -27,8 +27,8 @@ CreateThread(function()
             description = 'Group app to do stuff together',
             developer = 'solareon',
             defaultApp = true,
-            ui = 'slrn_groups/web/dist/assets/index.html',
-            icon = 'https://cfx-nui-slrn_groups/web/dist/icon.png'
+            ui = 'http://localhost:3000',
+            icon = 'https://cfx-nui-slrn_groups/ui/dist/icon.svg'
         })
         if not added then
             print('Could not add app:', errorMessage)
@@ -54,22 +54,22 @@ RegisterNuiCallback('getPlayerData', function(_, cb)
 end)
 
 RegisterNuiCallback('getGroupData', function(_, cb)
-    cb({})
     local groups, inGroup, groupStatus, groupStages = lib.callback.await('slrn_groups:server:getAllGroups')
     if groups then
-        exports['lb-phone']:SendCustomAppMessage(identifier, {
-            action = 'setGroups',
-            data = groups,
-        })
+        cb(groups)
     end
     exports['lb-phone']:SendCustomAppMessage(identifier, {
         action = 'setInGroup',
         data = inGroup and true or false
     })
-    exports['lb-phone']:SendCustomAppMessage(identifier, {
-        action = 'setCurrentGroup',
-        data = inGroup or nil
-    })
+    lib.callback('slrn_groups:server:getGroupMembersNames', false, function(groupData)
+        lib.print.error('currentGroupData')
+        lib.print.error(groupData)
+        exports['lb-phone']:SendCustomAppMessage(identifier, {
+            action = 'setCurrentGroup',
+            data = groupData or {}
+        })
+    end)
     exports['lb-phone']:SendCustomAppMessage(identifier, {
         action = 'setGroupJobSteps',
         data = groupStages or {}
@@ -80,11 +80,12 @@ RegisterNuiCallback('getGroupData', function(_, cb)
             data = {}
         })
     end
+    -- cb({})
 end)
 
 RegisterNuiCallback('createGroup', function(data, cb)
     TriggerServerEvent('slrn_groups:server:createGroup', data)
-    cb({})
+    cb('ok')
 end)
 
 RegisterNuiCallback('joinGroup', function(data, cb)
@@ -118,7 +119,7 @@ RegisterNuiCallback('deleteGroup', function(_, cb)
 end)
 
 RegisterNUICallback('getMemberList', function(_, cb)
-    local groupNames = lib.callback.await('slrn_groups:server:getGroupMembers')
+    local groupNames = lib.callback.await('slrn_groups:server:getGroupMembersNames')
     cb(groupNames)
 end)
 

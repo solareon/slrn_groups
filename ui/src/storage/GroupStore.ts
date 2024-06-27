@@ -14,7 +14,16 @@ interface GroupStore {
 export const useGroupStore = create<GroupStore>((set) => ({
   currentGroups: [],
   inGroup: false,
-  setGroups: (data) => set({ currentGroups: data }),
-  setCurrentGroup: (data) => set({ currentGroup: data }),
-  setInGroup: (data) => set({ inGroup: data }),
+  setGroups: (data) => {
+    console.log("Setting current groups:", data);
+    set({ currentGroups: data });
+  },
+  setCurrentGroup: (data) => {
+    console.log("Setting current group:", data);
+    set({ currentGroup: data });
+  },
+  setInGroup: (data) => {
+    console.log("Setting inGroup:", data);
+    set({ inGroup: data });
+  },
 }));

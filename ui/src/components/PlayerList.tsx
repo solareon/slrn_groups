@@ -4,7 +4,7 @@ import { faUser, faTrash, faCrown } from '@fortawesome/free-solid-svg-icons';
 import { usePlayerDataStore } from '../storage/PlayerDataStore';
 import { useGroupStore } from '../storage/GroupStore';
 
-const PlayerList: React.FC = ({ onClose }) => {
+const PlayerList: React.FC = ({ onClose, fetchNui }) => {
   const { playerData } = usePlayerDataStore();
   const { currentGroup } = useGroupStore();
 
@@ -16,17 +16,15 @@ const PlayerList: React.FC = ({ onClose }) => {
     console.log('Promote Member', member);
   }
 
-  const isLeader = currentGroup.members.find(member => member.Player === playerData.source) && true;
-
   return (
     <div className='fixed inset-0 bg-black bg-opacity-75 flex justify-center items-center'>
       <div className='bg-background border border-primary w-full max-w-md rounded-md shadow-md'>
         <div className='p-4 rounded-t-md'>
           <h2 className='text-2xl font-semibold'>Group Members</h2>
-          <h3 className='text-xl'>{currentGroup.GName}</h3>
+          <h3 className='text-xl'>{currentGroup.name}</h3>
         </div>
         <div className='p-2'>
-          {currentGroup.members.map((member, index) => {
+          {currentGroup.map((member, index) => {
             return (
               <div
                 key={index}
@@ -34,7 +32,8 @@ const PlayerList: React.FC = ({ onClose }) => {
               >
                 <FontAwesomeIcon icon={faUser} className='' />
                 <>
-                { (isLeader && member.Player !== playerData.source) && (
+                {/* { (isLeader && member.Player !== playerData.source) && ( */}
+                { (member.Player !== playerData.source) && (
                   <>
                     <FontAwesomeIcon
                       icon={faTrash}

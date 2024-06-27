@@ -164,7 +164,7 @@ function api.DestroyGroup(groupID)
     table.remove(groups, groupID)
 
     TriggerEvent('slrn_groups:server:GroupDeleted', groupID, group:getGroupMembers())
-    lib.TriggerClientEvent('slrn_groups:client:refreshGroups', -1, api.GetAllGroups())
+    lib.triggerClientEvent('slrn_groups:client:refreshGroups', -1, api.GetAllGroups())
 end
 utils.exportHandler('DestroyGroup', api.DestroyGroup)
 
@@ -177,7 +177,7 @@ function api.AddMember(groupID, source)
 
     group:addMember(source)
 
-    lib.TriggerClientEvent('slrn_groups:client:refreshGroups', -1, api.GetAllGroups())
+    lib.triggerClientEvent('slrn_groups:client:refreshGroups', -1, api.GetAllGroups())
 end
 utils.exportHandler('AddMember', api.AddMember)
 
@@ -232,7 +232,7 @@ function api.RemovePlayerFromGroup(source, groupID)
         if member.Player == source then
             table.remove(group.members, i)
 
-            lib.TriggerClientEvent('slrn_groups:client:refreshGroups', -1, api.GetAllGroups())
+            lib.triggerClientEvent('slrn_groups:client:refreshGroups', -1, api.GetAllGroups())
 
             -- There are no more members in the group, destroy it
             if memberCount == 1 then
@@ -347,14 +347,14 @@ function api.GetGroupMembersNames(groupId)
     end
 
     local members = {}
-    local amount = 0
 
     for i = 1, #group.members do
-        amount += 1
-        local member = {}
-        member.name = group.members[i].name
-        member.Player = group.members[i].Player
-        members[amount] = member
+        local member = group.members[i]
+
+        members[i] = {
+            name = member.name,
+            Player = member.Player
+        }
     end
 
     return members
@@ -397,8 +397,9 @@ function api.CreateGroup(src, name, password)
 
     groups[id] = group
 
+    lib.print.error(groups)
     -- Send non-sensitive data to all clients (id, name, memberCount)
-    lib.TriggerClientEvent('slrn_groups:client:refreshGroups', -1, api.GetAllGroups())
+    lib.triggerClientEvent('slrn_groups:client:refreshGroups', -1, api.GetAllGroups())
 
     return id
 end
