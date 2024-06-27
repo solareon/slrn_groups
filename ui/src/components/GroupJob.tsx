@@ -12,6 +12,10 @@ interface GroupJobProps {
   initialSteps: GroupJobStep[];
 }
 
+const {
+  fetchNui,
+} = window as any;
+
 const GroupJob: React.FC<GroupJobProps> = ({ setCurrentPage }) => {
   const { currentGroups, currentGroup, setCurrentGroup, inGroup, setInGroup } = useGroupStore();
   const { playerData } = usePlayerDataStore();
@@ -35,7 +39,7 @@ const GroupJob: React.FC<GroupJobProps> = ({ setCurrentPage }) => {
   }, [currentGroups]);
 
   const handleConfirm = () => {
-    fetchReactNui(confirmation.type);
+    fetchNui(confirmation.type);
     setIsDialogOpen(false);
   };
 

@@ -17,11 +17,10 @@ server_script 'server/**/*'
 shared_script '@ox_lib/init.lua'
 
 files {
-    "web/dist/**/*",
-    "web/icon.png"
+    "ui/dist/**/*",
 }
 
-ui_page "web/dist/index.html"
+ui_page "ui/dist/index.html"
 
 dependency '/assetpacks'
 

@@ -51,6 +51,7 @@ end)
 ---@param data {name: string, pass: string}
 RegisterNetEvent('slrn_groups:server:createGroup', function(data)
     api.CreateGroup(source, data.name, data.pass)
+    lib.print.error('Group Created')
 end)
 
 
@@ -61,7 +62,20 @@ lib.callback.register('slrn_groups:server:getGroupMembers', function(source)
     local groupId = api.GetGroupByMembers(source)
 
     if groupId then
+        lib.print.error(api.getGroupMembers(groupId))
         return api.getGroupMembers(groupId)
+    end
+end)
+
+---Gets all the player names of the players in the group
+---@param source number
+---@return table?
+lib.callback.register('slrn_groups:server:getGroupMembersNames', function(source)
+    local groupId = api.GetGroupByMembers(source)
+
+    if groupId then
+        lib.print.error(api.GetGroupMembersNames(groupId))
+        return api.GetGroupMembersNames(groupId)
     end
 end)
 
@@ -71,6 +85,7 @@ end)
 ---@param source number
 lib.callback.register('slrn_groups:server:getAllGroups', function(source)
     local groupId = api.GetGroupByMembers(source)
+    lib.print.error(api.GetAllGroups())
 
     if groupId then
         return api.GetAllGroups(), groupId, api.getJobStatus(groupId), api.GetGroupStages(groupId)
