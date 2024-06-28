@@ -59,7 +59,7 @@ const App = () => {
 
   useEffect(() => {
     if (currentGroup) {
-      setIsLeader(currentGroup.some((member) => member.Player === playerData.source && member.isLeader));
+      setIsLeader(currentGroup.some((member) => member.playerId === playerData.source && member.isLeader));
     }
   }, [currentGroup]);
 

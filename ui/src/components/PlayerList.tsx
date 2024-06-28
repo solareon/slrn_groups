@@ -9,11 +9,11 @@ const PlayerList: React.FC = ({ onClose, fetchNui }) => {
   const { currentGroup, isLeader } = useGroupStore();
 
   const removeGroupMember = (member) => {
-    fetchNui('removeGroupMember', member.Player);
+    fetchNui('removeGroupMember', member.playerId);
   };
 
   const promoteGroupMember = (member) => {
-    fetchNuie('promoteGroupMember', member.Player);
+    fetchNuie('promoteGroupMember', member.playerId);
   }
 
   return (
@@ -32,8 +32,7 @@ const PlayerList: React.FC = ({ onClose, fetchNui }) => {
               >
                 <FontAwesomeIcon icon={faUser} size="xl" />
                 <>
-                { (isLeader && member.Player !== playerData.source) && (
-                // { (member.Player !== playerData.source) && (
+                { (isLeader && member.playerId !== playerData.source) && (
                   <>
                     <FontAwesomeIcon
                       icon={faTrash}
