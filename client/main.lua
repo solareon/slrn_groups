@@ -1,19 +1,4 @@
----@diagnostic disable: lowercase-global
-
 local identifier = 'slrn_groups'
-
--- Bridge
-if GetResourceState('qbx_core') == 'started' then
-    function getPlayerData()
-        return QBX.PlayerData.citizenid
-    end
-else
-    local QBCore = exports['qb-core']:GetCoreObject()
-
-    function getPlayerData()
-        return QBCore.Functions.GetPlayerData()
-    end
-end
 
 CreateThread(function()
     while GetResourceState('lb-phone') ~= 'started' do
@@ -27,8 +12,10 @@ CreateThread(function()
             description = 'Group app to do stuff together',
             developer = 'solareon',
             defaultApp = true,
-            ui = 'http://localhost:3000',
-            icon = 'https://cfx-nui-slrn_groups/ui/dist/icon.svg'
+            -- ui = GetCurrentResourceName() .. "/ui/dist/index.html",
+            ui = "http://localhost:3000",
+            icon = "https://cfx-nui-" .. GetCurrentResourceName() .. "/ui/dist/icon.svg",
+            fixBlur = true
         })
         if not added then
             print('Could not add app:', errorMessage)
@@ -45,7 +32,7 @@ CreateThread(function()
 end)
 
 RegisterNuiCallback('getPlayerData', function(_, cb)
-    local citizenId = getPlayerData()
+    local citizenId = GetPlayerData()
     local playerData = {
         source = cache.serverId,
         citizenId = citizenId
@@ -60,16 +47,13 @@ RegisterNuiCallback('getGroupData', function(_, cb)
     end
     exports['lb-phone']:SendCustomAppMessage(identifier, {
         action = 'setInGroup',
-        data = inGroup and true or false
+        data = inGroup or false
     })
-    lib.callback('slrn_groups:server:getGroupMembersNames', false, function(groupData)
-        lib.print.error('currentGroupData')
-        lib.print.error(groupData)
-        exports['lb-phone']:SendCustomAppMessage(identifier, {
-            action = 'setCurrentGroup',
-            data = groupData or {}
-        })
-    end)
+    local groupData = lib.callback.await('slrn_groups:server:getGroupMembersNames', false)
+    exports['lb-phone']:SendCustomAppMessage(identifier, {
+        action = 'setCurrentGroup',
+        data = groupData or {}
+    })
     exports['lb-phone']:SendCustomAppMessage(identifier, {
         action = 'setGroupJobSteps',
         data = groupStages or {}
@@ -80,16 +64,16 @@ RegisterNuiCallback('getGroupData', function(_, cb)
             data = {}
         })
     end
-    -- cb({})
+    cb({})
 end)
 
 RegisterNuiCallback('createGroup', function(data, cb)
     TriggerServerEvent('slrn_groups:server:createGroup', data)
-    cb('ok')
+    cb({})
 end)
 
 RegisterNuiCallback('joinGroup', function(data, cb)
-    local message = lib.callback.await('slrn_groups:server:joinGroup', data)
+    local message = lib.callback.await('slrn_groups:server:joinGroup', false, data)
 
     exports['lb-phone']:SendNotification({
         app = identifier,
@@ -123,7 +107,26 @@ RegisterNUICallback('getMemberList', function(_, cb)
     cb(groupNames)
 end)
 
+RegisterNUICallback('removeGroupMember', function (data, cb)
+    TriggerServerEvent('slrn_groups:server:removeGroupMember', data)
+    cb({})
+end)
+
+RegisterNUICallback('promoteGroupMember', function (data, cb)
+    TriggerServerEvent('slrn_groups:server:promoteGroupMember', data)
+    cb({})
+end)
+
 RegisterNetEvent('slrn_groups:client:refreshGroups', function(groupData)
+    local currentGroupData, inGroup = lib.callback.await('slrn_groups:server:getGroupMembersNames', false)
+    exports['lb-phone']:SendCustomAppMessage(identifier, {
+        action = 'setCurrentGroup',
+        data = currentGroupData or {}
+    })
+    exports['lb-phone']:SendCustomAppMessage(identifier, {
+        action = 'setInGroup',
+        data = inGroup or 0
+    })
     exports['lb-phone']:SendCustomAppMessage(identifier, {
         action = 'setGroups',
         data = groupData,

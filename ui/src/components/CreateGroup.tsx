@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from "react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faXmark } from "@fortawesome/free-solid-svg-icons";
 
 const CreateGroup: React.FC<any> = ({ onSelect, onClose }) => {
   const [groupName, setGroupName] = useState("");
@@ -30,15 +32,13 @@ const CreateGroup: React.FC<any> = ({ onSelect, onClose }) => {
     <div className="fixed inset-0 bg-black bg-opacity-75 flex justify-center items-center">
       <div
         className="bg-background
-       border border-border-primary-light dark:border-none p-6 rounded-lg shadow-md w-full max-w-md"
+       border border-border-primary-light dark:border-none p-6 rounded-lg shadow-md w-11/12"
       >
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-2xl font-bold">Create Group</h2>
-          <button onClick={onClose} className=" text-lg">
-            ×
-          </button>
+          <FontAwesomeIcon icon={faXmark} onClick={onClose} size="2xl"/>
         </div>
-        <form className="text-left" onSubmit={handleSubmit}>
+        <form className="text-left text-xl" onSubmit={handleSubmit}>
           <div className="mb-4">
             <label htmlFor="groupName" className="block mb-2">
               Group Name
@@ -48,7 +48,7 @@ const CreateGroup: React.FC<any> = ({ onSelect, onClose }) => {
               id="groupName"
               value={groupName}
               onChange={(e) => setGroupName(e.target.value)}
-              className="w-full p-2 rounded bg-secondary border dark:border-none border-border-primary-light"
+              className="w-full p-2 rounded bg-secondary border dark:border-none border-secondary"
             />
           </div>
           <div className="mb-4">
@@ -60,7 +60,7 @@ const CreateGroup: React.FC<any> = ({ onSelect, onClose }) => {
               id="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full p-2 rounded bg-secondary border dark:border-none border-border-primary-light"
+              className="w-full p-2 rounded bg-secondary border dark:border-none border-secondary"
             />
           </div>
           <div className="mb-4">
@@ -72,7 +72,7 @@ const CreateGroup: React.FC<any> = ({ onSelect, onClose }) => {
               id="verifyPassword"
               value={verifyPassword}
               onChange={(e) => setVerifyPassword(e.target.value)}
-              className="w-full p-2 rounded bg-secondary border dark:border-none border-border-primary-light"
+              className="w-full p-2 rounded bg-secondary border dark:border-none border-secondary"
             />
           </div>
           <div className="flex justify-end">

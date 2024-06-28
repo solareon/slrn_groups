@@ -6,49 +6,51 @@ import { useGroupStore } from '../storage/GroupStore';
 
 const PlayerList: React.FC = ({ onClose, fetchNui }) => {
   const { playerData } = usePlayerDataStore();
-  const { currentGroup } = useGroupStore();
+  const { currentGroup, isLeader } = useGroupStore();
 
   const removeGroupMember = (member) => {
-    console.log('Remove Member', member);
+    fetchNui('removeGroupMember', member.Player);
   };
 
   const promoteGroupMember = (member) => {
-    console.log('Promote Member', member);
+    fetchNuie('promoteGroupMember', member.Player);
   }
 
   return (
     <div className='fixed inset-0 bg-black bg-opacity-75 flex justify-center items-center'>
-      <div className='bg-background border border-primary w-full max-w-md rounded-md shadow-md'>
+      <div className='bg-background border border-primary w-11/12 rounded-md shadow-md'>
         <div className='p-4 rounded-t-md'>
           <h2 className='text-2xl font-semibold'>Group Members</h2>
           <h3 className='text-xl'>{currentGroup.name}</h3>
         </div>
-        <div className='p-2'>
+        <div className='m-4'>
           {currentGroup.map((member, index) => {
             return (
               <div
                 key={index}
-                className='flex items-center p-2 rounded-md my-2 gap-x-2 bg-secondary'
+                className='flex p-3 items-center rounded-md my-2 gap-x-2 bg-secondary'
               >
-                <FontAwesomeIcon icon={faUser} className='' />
+                <FontAwesomeIcon icon={faUser} size="xl" />
                 <>
-                {/* { (isLeader && member.Player !== playerData.source) && ( */}
-                { (member.Player !== playerData.source) && (
+                { (isLeader && member.Player !== playerData.source) && (
+                // { (member.Player !== playerData.source) && (
                   <>
                     <FontAwesomeIcon
                       icon={faTrash}
                       className='self-right hover:text-danger'
+                      size="xl"
                       onClick={() => removeGroupMember(member)}
                     />
                     <FontAwesomeIcon
                       icon={faCrown}
                       className='self-right hover:text-success'
+                      size="xl"
                       onClick={() => promoteGroupMember(member)}
                     />
                   </>
                 )}
                 </>
-                <span className=''>{member.name}</span>
+                <span className='text-xl'>{member.name}</span>
               </div>
             );
           })}

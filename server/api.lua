@@ -192,7 +192,7 @@ function api.isPasswordCorrect(groupId, password)
         return lib.print.error('isPasswordCorrect was sent an invalid groupID :'..groupId)
     end
 
-    return groups:getPassword() == password
+    return group:getPassword() == password
 end
 
 
@@ -353,7 +353,8 @@ function api.GetGroupMembersNames(groupId)
 
         members[i] = {
             name = member.name,
-            Player = member.Player
+            Player = member.Player,
+            isLeader = member.Player == group.leader
         }
     end
 
@@ -397,7 +398,8 @@ function api.CreateGroup(src, name, password)
 
     groups[id] = group
 
-    lib.print.error(groups)
+    lib.print.error('created group')
+    lib.print.error(api.GetAllGroups())
     -- Send non-sensitive data to all clients (id, name, memberCount)
     lib.triggerClientEvent('slrn_groups:client:refreshGroups', -1, api.GetAllGroups())
 
