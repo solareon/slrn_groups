@@ -23,11 +23,9 @@ function groups:constructor(id, name, password, leader, ScriptCreated)
     self.private.password = password or lib.string.random('1111111')
     self.leader = leader
     self.ScriptCreated = ScriptCreated
-    local playerData = GetPlayerData(leader)
     self.members = {
         {
             name = GetPlayerName(leader),
-            CID = playerData.citizenid,
             Player = leader
         }
     }
@@ -39,10 +37,8 @@ end
 ---Adds a member to the group.
 ---@param source number
 function groups:addMember(source)
-    local playerData = GetPlayerData(source)
     self.members[#self.members+1] = {
         name = GetPlayerName(source),
-        CID = playerData.citizenid,
         Player = source
     }
 end

@@ -32,10 +32,8 @@ CreateThread(function()
 end)
 
 RegisterNuiCallback('getPlayerData', function(_, cb)
-    local citizenId = GetPlayerData()
     local playerData = {
         source = cache.serverId,
-        citizenId = citizenId
     }
     cb(playerData)
 end)

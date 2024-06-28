@@ -2,7 +2,6 @@ import { create } from 'zustand';
 
 interface PlayerData {
   source: number;
-  citizenId: string;
 }
 
 interface PlayerDataStore {
