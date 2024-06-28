@@ -19,6 +19,7 @@
     },
     "scripts": {
         "start": "vite",
+        "start:game": "vite build --watch",
         "dev": "vite dev",
         "build": "vite build",
         "serve": "vite preview"

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import CreateGroup from "./CreateGroup";
 import JoinGroup from "./JoinGroup";
 import PlayerList from "./PlayerList";
@@ -16,7 +16,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 
 const GroupDashboard = ({ setCurrentPage, fetchNui }) => {
-  const { currentGroups, currentGroup, inGroup, } = useGroupStore();
+  const { currentGroups, currentGroup, inGroup, isLeader } = useGroupStore();
   const { playerData } = usePlayerDataStore();
   const [showCreateGroup, setShowCreateGroup] = useState(false);
   const [showPlayerList, setShowPlayerList] = useState(false);
@@ -24,24 +24,17 @@ const GroupDashboard = ({ setCurrentPage, fetchNui }) => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [confirmation, setConfirmation] = useState({ message: null, type: null });
 
-  useEffect(() => {
-      fetchNui('getMemberList').then((data) => setCurrentGroup(data));
-  }, [currentGroups]);
-
   const handleConfirm = () => {
     fetchNui(confirmation.type);
-    console.log(confirmation);
     setIsDialogOpen(false);
   };
 
   const createGroup = (groupData) => {
-    console.log(groupData);
     fetchNui("createGroup", {name: groupData.groupName, pass: groupData.password});
   };
 
   const joinGroup = (groupData) => {
-    fetchNui("joinGroup", {groupData});
-    console.log(groupData);
+    fetchNui("joinGroup", {id: groupData.groupId, pass: groupData.password});
   };
 
   const leaveGroup = () => {
@@ -49,10 +42,9 @@ const GroupDashboard = ({ setCurrentPage, fetchNui }) => {
     setIsDialogOpen(true);
   };
 
-  const removeGroup = (groupData) => {
-    setConfirmation({message: "Disband the group?", type: "removeGroup"})
+  const deleteGroup = (groupData) => {
+    setConfirmation({message: "Disband the group?", type: "deleteGroup"})
     setIsDialogOpen(true);
-    console.log(groupData);
   };
 
   const renderIcons = (isLeader, isMember, group) => {
@@ -62,13 +54,15 @@ const GroupDashboard = ({ setCurrentPage, fetchNui }) => {
           <FontAwesomeIcon
             icon={faList}
             className="mx-1 hover:text-background"
+            size="xl"
             onClick={() => setShowPlayerList(true)}
           />
           {isLeader && (
             <FontAwesomeIcon
               icon={faTrash}
               className="mx-1 hover:text-danger"
-              onClick={() => removeGroup(group)}
+              size="xl"
+              onClick={() => deleteGroup(group)}
             />
           )}
           {isMember && !isLeader && (
@@ -76,6 +70,7 @@ const GroupDashboard = ({ setCurrentPage, fetchNui }) => {
               icon={faRightFromBracket}
               className="mx-1 hover:text-danger"
               onClick={() => leaveGroup(group)}
+              size="xl"
             />
           )}
         </div>
@@ -90,7 +85,7 @@ const GroupDashboard = ({ setCurrentPage, fetchNui }) => {
           <button
             onClick={() => setShowCreateGroup(true)}
             disabled={inGroup}
-            className={`p-2 w-1/3 bg-primary rounded
+            className={`py-2 w-1/3 text-lg bg-primary rounded
               ${inGroup ? "cursor-not-allowed" : "hover:bg-secondary"}`}
           >
             Create Group
@@ -98,7 +93,7 @@ const GroupDashboard = ({ setCurrentPage, fetchNui }) => {
           <button
             onClick={() => setCurrentPage("GroupJob")}
             disabled={!inGroup}
-            className={`p-2 w-1/3 bg-primary rounded
+            className={`py-2 w-1/3 text-lg bg-primary rounded
               ${!inGroup ? "cursor-not-allowed" : "hover:bg-secondary"}`}
           >
             Show Tasks
@@ -106,32 +101,29 @@ const GroupDashboard = ({ setCurrentPage, fetchNui }) => {
           <button
             onClick={() => leaveGroup()}
             disabled={!inGroup}
-            className={`p-2 w-1/3 bg-primary rounded
+            className={`py-2 w-1/3 text-lg bg-primary rounded
               ${!inGroup ? "cursor-not-allowed" : "hover:bg-danger"}`}
           >
             Leave Group
           </button>
         </div>
+        <h2 className="mb-4">
         {currentGroups?.length > 0 ? (
-          <h2 className="mb-4">
-            Create a group or join an existing group below
-          </h2>
-        ) : (
-          <h2 className="mb-4">Create a group to get started</h2>
+          'Create a group or join an existing group below'
+          ) : (
+          'Create a group to get started'
         )}
+        </h2>
         {currentGroups && currentGroups.length > 0 && (
-          <div className="bg-secondary p-4 rounded-lg shadow-inner">
-            {currentGroups.map((group) => {
-              let isLeader = group.leader === playerData.source;
-              // let isMember = group.members.some(
-              //   (member) => member.Player === playerData.source
-              // );
-              let isMember = true;
+          <>
+          {currentGroups.map((group) => {
+              let isMember = group.id === inGroup;
 
               return (
+                // <div className="bg-secondary p-4 rounded-lg shadow-inner">
                 <div
                   key={group.id}
-                  className={`flex justify-between items-center p-3 mb-2 rounded-md ${
+                  className={`p-4 bg-secondary rounded-md flex justify-between items-center mb-2 ${
                     !inGroup && "hover:bg-accent"
                   }`}
                   onClick={() => {
@@ -141,22 +133,23 @@ const GroupDashboard = ({ setCurrentPage, fetchNui }) => {
                   }}
                 >
                   <div className="flex items-center">
-                    <FontAwesomeIcon icon={faUsers} className="mr-2" />
-                    <span>{group.name}</span>
+                    <FontAwesomeIcon icon={faUsers} className="mr-2" size="xl"/>
+                    <span className="text-2xl font-bold">{group.name}</span>
                   </div>
                   <div className="flex items-center">
                     <>
                       {isMember && renderIcons(isLeader, isMember, group)}
-                      <FontAwesomeIcon icon={faUserGroup} className="" />
+                      <FontAwesomeIcon icon={faUserGroup} size="xl"/>
                       <span className="mx-2 font-semibold">
-                        {group.membercount}
+                        {group.memberCount}
                       </span>
                     </>
                   </div>
                 </div>
+                // </div>
               );
             })}
-          </div>
+          </>
         )}
         {showCreateGroup && (
           <CreateGroup

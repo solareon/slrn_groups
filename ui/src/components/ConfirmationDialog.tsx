@@ -3,7 +3,7 @@ import React from 'react';
 const ConfirmationDialog = ({ onClose, onConfirm, confirmation}) => {
   return (
     <div className="fixed inset-0 bg-black bg-opacity-75 flex justify-center items-center">
-      <div className="bg-background border border-primary rounded-lg p-6 w-full max-w-md">
+      <div className="bg-background border border-primary rounded-lg p-6 w-11/12">
         <h2 className="text-text text-xl font-semibold mb-4">
           {confirmation.message}
         </h2>

@@ -26,8 +26,8 @@ const App = () => {
   } = window as any;
   const [currentPage, setCurrentPage] = useState("GroupDashboard");
   const { setGroupJobSteps } = useGroupJobStepStore();
-  const { inGroup, setGroups } = useGroupStore();
-  const { setPlayerData } = usePlayerDataStore();
+  const { inGroup, currentGroup, setGroups, setIsLeader, setCurrentGroup } = useGroupStore();
+  const { playerData, setPlayerData } = usePlayerDataStore();
 
   useEffect(() => {
     if (devMode) {
@@ -46,14 +46,22 @@ const App = () => {
     });
 
     fetchNui<Group[]>("getGroupData").then((data) => setGroups(data));
-    // fetchNui<Group[]>("getGroupData").then(() => void);
   }, []);
 
   useEffect(() => {
     if (!inGroup) {
       setCurrentPage("GroupDashboard");
     }
+    if (inGroup) {
+      fetchNui('getMemberList').then((data) => setCurrentGroup(data));
+    }
   }, [inGroup]);
+
+  useEffect(() => {
+    if (currentGroup) {
+      setIsLeader(currentGroup.some((member) => member.Player === playerData.source && member.isLeader));
+    }
+  }, [currentGroup]);
 
   useNuiEvent("startJob", () => {
     setCurrentPage("GroupJob");
@@ -107,12 +115,13 @@ const App = () => {
         ref={appDiv}
         data-theme={theme}
       >
-        {!devMode && (
+        {devMode && (
           <button onClick={toggleTheme} className="w-full rounded-m">
             Toggle Theme
           </button>
         )}
-        <div className="text-left text-4xl font-bold m-2 pt-2">Groups</div>
+        <div>&nbsp;</div>
+        <div className="text-left text-4xl font-bold mt-6 mb-2 pt-2">Groups</div>
         {currentPage === "GroupDashboard" && (
           <GroupDashboard
             setCurrentPage={setCurrentPage} fetchNui={fetchNui}

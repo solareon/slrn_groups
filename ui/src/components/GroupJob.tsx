@@ -17,26 +17,15 @@ const {
 } = window as any;
 
 const GroupJob: React.FC<GroupJobProps> = ({ setCurrentPage }) => {
-  const { currentGroups, currentGroup, setCurrentGroup, inGroup, setInGroup } = useGroupStore();
+  const { currentGroups, currentGroup, inGroup } = useGroupStore();
   const { playerData } = usePlayerDataStore();
-  const { groupJobSteps } = useGroupJobStepStore();
+  const { groupJobSteps, setGroupJobSteps } = useGroupJobStepStore();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [confirmation, setConfirmation] = useState({ message: null, type: null });
 
   useEffect(() => {
-    setInGroup(
-      currentGroups &&
-        currentGroups.length > 0 &&
-        currentGroups.some((group) =>
-          group.members.some((member) => member.Player === playerData.source)
-        )
-    );
-    setCurrentGroup(
-      currentGroups.find((group) =>
-        group.members.some((member) => member.Player === playerData.source)
-      )
-    );
-  }, [currentGroups]);
+    fetchReactNui("getGroupJobSteps").then((data) => setGroupJobSteps(data));
+  }, []);
 
   const handleConfirm = () => {
     fetchNui(confirmation.type);
@@ -51,7 +40,7 @@ const GroupJob: React.FC<GroupJobProps> = ({ setCurrentPage }) => {
   return (
     <div className="flex items-center">
       <div className="w-full p-2">
-        <div className="mb-4 flex gap-x-2">
+        <div className="mb-4 flex gap-x-2 text-xl">
           <button
             onClick={() => setCurrentPage("GroupDashboard")}
             className={`p-2 w-1/2 bg-primary rounded
@@ -67,11 +56,7 @@ const GroupJob: React.FC<GroupJobProps> = ({ setCurrentPage }) => {
             Leave Group
           </button>
         </div>
-        {groupJobSteps.length > 0 ? (
-          <h2 className="mb-4">Here are the current group tasks</h2>
-        ) : (
-          <h2 className="mb-4">No tasks available</h2>
-        )}
+          <span className="mb-4 text-2xl">{groupJobSteps.length > 0 ? ( 'Here are the current group tasks') : ( 'No tasks available' )}</span>
         <div className="w-full p-2">
           <div className="relative border-l border-accent ml-4 pl-4">
             {groupJobSteps.map((step) => (
