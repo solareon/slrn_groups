@@ -9,23 +9,30 @@ jobs:
         working-directory: ui
 
     steps:
-      - name: Checkout
-        uses: actions/checkout@v2
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4.0.0
+        with:
+          version: 9
+
       - name: Setup node environment
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v4
         with:
           node-version: 20.x
-      - name: Get pnpm cache directory path
-        id: pnpm-cache-dir-path
-        run: echo "::set-output name=dir::$(pnpm config get store-dir)"
-      - uses: actions/cache@v2
-        id: pnpm-cache # use this to check for `cache-hit` (`steps.pnpm-cache.outputs.cache-hit != 'true'`)
-        with:
-          path: ${{ steps.pnpm-cache-dir-path.outputs.dir }}
-          key: ${{ runner.os }}-pnpm-${{ hashFiles('**/pnpm-lock.yaml') }}
-          restore-keys: |
-              ${{ runner.os }}-pnpm-
+          cache: "pnpm"
+          cache-dependency-path: "ui/pnpm-lock.yaml"
+
       - name: Install deps
         run: pnpm install --frozen-lockfile
+        working-directory: ui
+
       - name: Try build
         run: pnpm build
+        working-directory: ui
+        env:
+          CI: true
+
