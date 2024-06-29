@@ -1,7 +1,7 @@
 # slrn_groups
 A group app for [lb-phone](https://lbphone.com/) the provides `qb-phone` compatible exports. This should work with most resources that expect a `qb-phone` style group.
 
-**QB/QBOX supported with bridge**
+**QBOX/QB/ESX/ND/OX supported with bridge**
 
 ## Installation
 Download the [release version](https://github.com/solareon/slrn_groups/release) and copy to your server.
