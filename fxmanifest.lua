@@ -18,6 +18,7 @@ shared_script '@ox_lib/init.lua'
 
 files {
     "ui/dist/**/*",
+    "ui/public/**"
 }
 
 ui_page "ui/dist/index.html"

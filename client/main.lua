@@ -13,9 +13,13 @@ CreateThread(function()
             developer = 'solareon',
             defaultApp = true,
             ui = GetCurrentResourceName() .. "/ui/dist/index.html",
-            -- ui = "http://localhost:3000",
-            icon = "https://cfx-nui-" .. GetCurrentResourceName() .. "/ui/dist/icon.svg",
-            fixBlur = true
+            -- ui = "http://localhost:3000", -- for local ui build testing
+            icon = "https://cfx-nui-" .. GetCurrentResourceName() .. "/ui/public/icon.svg",
+            fixBlur = true,
+            images = { -- OPTIONAL array of screenshots of the app, used for showcasing the app
+            "https://cfx-nui-" .. GetCurrentResourceName() .. "/ui/public/screenshot-light.png",
+            "https://cfx-nui-" .. GetCurrentResourceName() .. "/ui/public/screenshot-dark.png"
+        },
         })
         if not added then
             print('Could not add app:', errorMessage)
