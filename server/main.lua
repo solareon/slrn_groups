@@ -82,7 +82,7 @@ end)
 ---Gets all the player names of the players in the group
 ---@param source number
 ---@return table?
----@return number | boolean
+---@return number | boolean?
 lib.callback.register('slrn_groups:server:getGroupMembersNames', function(source)
     local groupId = api.GetGroupByMembers(source)
 
@@ -105,6 +105,17 @@ lib.callback.register('slrn_groups:server:getAllGroups', function(source)
         return api.GetAllGroups(), groupId, api.getJobStatus(groupId), api.GetGroupStages(groupId)
     else
         return api.GetAllGroups(), false
+    end
+end)
+
+---Get group stages
+---@param source number
+---@return table?
+lib.callback.register('slrn_groups:server:getGroupJobSteps', function(source)
+    local groupId = api.GetGroupByMembers(source)
+
+    if groupId then
+        return api.GetGroupStages(groupId)
     end
 end)
 

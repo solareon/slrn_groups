@@ -1,4 +1,4 @@
-if not lib.checkDependency('ox_core', '0.21.3', true) then return end
+if GetResourceState('ox_core') ~= 'started' then return end
 
 local Ox = require '@ox_core.lib.init'
 

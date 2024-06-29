@@ -12,8 +12,8 @@ CreateThread(function()
             description = 'Group app to do stuff together',
             developer = 'solareon',
             defaultApp = true,
-            -- ui = GetCurrentResourceName() .. "/ui/dist/index.html",
-            ui = "http://localhost:3000",
+            ui = GetCurrentResourceName() .. "/ui/dist/index.html",
+            -- ui = "http://localhost:3000",
             icon = "https://cfx-nui-" .. GetCurrentResourceName() .. "/ui/dist/icon.svg",
             fixBlur = true
         })
@@ -63,6 +63,11 @@ RegisterNuiCallback('getGroupData', function(_, cb)
         })
     end
     cb({})
+end)
+
+RegisterNuiCallback('getGroupJobSteps', function(_, cb)
+    local groupStages = lib.callback.await('slrn_groups:server:getGroupJobSteps')
+    cb(groupStages)
 end)
 
 RegisterNuiCallback('createGroup', function(data, cb)
