@@ -11,15 +11,26 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
+
+      - name: Check for changes in UI directory
+        id: check_changes
+        run: |
+          if git diff --quiet HEAD^ HEAD -- ui; then
+            echo "No changes in UI directory. Skipping step."
+            echo "::set-output name=skip_step::true"
+          else
+            echo "Changes detected in UI directory. Proceeding with step."
+            echo "::set-output name=skip_step::false"
+          fi
 
       - name: Install pnpm
+        if: steps.check_changes.outputs.skip_step != 'true'
         uses: pnpm/action-setup@v4
         with:
           version: 9
 
       - name: Setup node environment
+        if: steps.check_changes.outputs.skip_step != 'true'
         uses: actions/setup-node@v4
         with:
           node-version: 20.x
@@ -27,10 +38,12 @@ jobs:
           cache-dependency-path: "ui/pnpm-lock.yaml"
 
       - name: Install deps
+        if: steps.check_changes.outputs.skip_step != 'true'
         run: pnpm install --frozen-lockfile
         working-directory: ui
 
       - name: Try build
+        if: steps.check_changes.outputs.skip_step != 'true'
         run: pnpm build
         working-directory: ui
         env:
