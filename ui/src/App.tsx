@@ -6,7 +6,6 @@ import DataHandler from "./components/DataHandler";
 import { GroupJobStep } from "./types/GroupJobStep";
 import { Group } from "./types/Group";
 import { useNuiEvent } from "./hooks/useNuiEvent";
-import { useGroupJobStepStore } from "./storage/GroupJobStepStore";
 import { useGroupStore } from "./storage/GroupStore";
 import { usePlayerDataStore } from "./storage/PlayerDataStore";
 import "./App.css";
@@ -25,7 +24,6 @@ const App = () => {
     onSettingsChange,
   } = window as any;
   const [currentPage, setCurrentPage] = useState("GroupDashboard");
-  const { setGroupJobSteps } = useGroupJobStepStore();
   const { inGroup, currentGroup, setGroups, setIsLeader, setCurrentGroup } = useGroupStore();
   const { playerData, setPlayerData } = usePlayerDataStore();
 
@@ -51,9 +49,6 @@ const App = () => {
   useEffect(() => {
     if (!inGroup) {
       setCurrentPage("GroupDashboard");
-    }
-    if (inGroup) {
-      fetchNui('getMemberList').then((data) => setCurrentGroup(data));
     }
   }, [inGroup]);
 
@@ -128,7 +123,7 @@ const App = () => {
           />
         )}
         {currentPage === "GroupJob" && (
-          <GroupJob setCurrentPage={setCurrentPage} />
+          <GroupJob setCurrentPage={setCurrentPage} fetchNui={fetchNui}/>
         )}
       </div>
       <DataHandler />

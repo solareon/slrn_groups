@@ -1,5 +1,5 @@
 # slrn_groups
-A group app for [lb-phone](https://lbphone.com/) the utilizes `qb-phone` compatible exports. This should work with most resources that expect a `qb-phone` style group but there might be corner cases. This isn't great code but it works.
+A group app for [lb-phone](https://lbphone.com/) the provides `qb-phone` compatible exports. This should work with most resources that expect a `qb-phone` style group.
 
 **QB/QBOX supported with bridge**
 
@@ -10,7 +10,8 @@ Download the [release version](https://github.com/solareon/slrn_groups/release) 
 - [Discord](https://discord.gg/TZFBBHvG6E)
 
 # Credits
-- [RijayJH](https://github.com/RijayJH/rj_groups-for-lb_phone) for original code
+- [FjamZoo](https://github.com/FjamZoo) for rewriting groups layer
+- [RijayJH](https://github.com/RijayJH/rj_groups-for-lb_phone) for original idea
 - [overextended](https://github.com/overextended) for ox_lib
 
 # Dependencies
