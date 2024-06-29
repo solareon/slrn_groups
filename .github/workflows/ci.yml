@@ -1,0 +1,38 @@
+name: Main CI
+on: [push, pull_request]
+jobs:
+  build:
+    name: Build Test
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ui
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - name: Setup node environment
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20.x
+          cache: "pnpm"
+          cache-dependency-path: "ui/pnpm-lock.yaml"
+
+      - name: Install deps
+        run: pnpm install --frozen-lockfile
+        working-directory: ui
+
+      - name: Try build
+        run: pnpm build
+        working-directory: ui
+        env:
+          CI: true
+
