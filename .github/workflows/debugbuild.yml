@@ -57,5 +57,5 @@ jobs:
             - name: Upload Build Artifact
               uses: actions/upload-artifact@v4
               with:
-                name: debug-build
-                path: ${{ github.event.repository.name }}.zip
+                name: ${{ github.event.repository.name }}.zip
+                path: ./${{ github.event.repository.name }}
