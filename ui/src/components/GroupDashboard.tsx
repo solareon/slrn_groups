@@ -107,7 +107,7 @@ const GroupDashboard = ({ setCurrentPage, fetchNui }) => {
             Leave Group
           </button>
         </div>
-        <h2 className="mb-4">
+        <h2 className="mb-4 text-2xl">
         {currentGroups?.length > 0 ? (
           'Create a group or join an existing group below'
           ) : (
@@ -116,13 +116,13 @@ const GroupDashboard = ({ setCurrentPage, fetchNui }) => {
         </h2>
         {currentGroups && currentGroups.length > 0 && (
           <>
-          {currentGroups.map((group) => {
+          {currentGroups.map((group, index) => {
               let isMember = group.id === inGroup;
 
               return (
                 // <div className="bg-secondary p-4 rounded-lg shadow-inner">
                 <div
-                  key={group.id}
+                  key={index}
                   className={`p-4 bg-secondary rounded-md flex justify-between items-center mb-2 ${
                     !inGroup && "hover:bg-accent"
                   }`}

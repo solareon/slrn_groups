@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import ConfirmationDialog from "./ConfirmationDialog";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCircle } from "@fortawesome/free-solid-svg-icons";
-import { fetchReactNui } from "../utils/fetchReactNui";
 import { GroupJobStep } from "../types/GroupJobStep";
 import { useGroupJobStepStore } from "../storage/GroupJobStepStore";
 import { useGroupStore } from "../storage/GroupStore";
@@ -62,13 +61,13 @@ const GroupJob: React.FC<GroupJobProps> = ({ setCurrentPage, fetchNui }) => {
                     </button>
                 </div>
                 <span className="mb-6 text-2xl">
-                    {groupJobSteps.length > 0
+                    {groupJobSteps && groupJobSteps.length > 0
                         ? "Here are the current group tasks"
                         : "No tasks available"}
                 </span>
                 <div className="w-full p-2">
                     <div className="relative border-l border-accent ml-2 pl-2">
-                        {groupJobSteps.map((step, index) => (
+                        {groupJobSteps && groupJobSteps.map((step, index) => (
                             <div
                                 key={index}
                                 className="mb-6 flex items-center text-left"

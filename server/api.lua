@@ -6,32 +6,45 @@ local groups = {}
 
 local api = {}
 
+local groupIndex = 0
+
+--- Returns the group table index by ID
+---@param id number
+---@return group?
+function api.findGroupById(id)
+    for i=1, #groups do
+        if groups[i].id == id then
+            return groups[i]
+        end
+    end
+end
+
 --- Notifies all members of a group with a message
----@param groupID number
+---@param groupId number
 ---@param msg string
 ---@param type string
-function api.NotifyGroup(groupID, msg, type)
-    local group = groups[groupID]
+function api.NotifyGroup(groupId, msg, type)
+    local group = api.findGroupById(groupId)
 
     if not group then
-        return lib.print.error('NotifyGroup was sent an invalid groupID :'..groupID)
+        return lib.print.error('NotifyGroup was sent an invalid groupId :'..groupId)
     end
 
     for i = 1, #group.members do
-        utils.notify(group.members[i].Player, msg, type)
+        utils.notify(group.members[i].playerId, msg, type)
     end
 end
 utils.exportHandler('NotifyGroup', api.NotifyGroup)
 
 --- Notifies all members of a group with a custom notification
----@param groupID number
+---@param groupId number
 ---@param header string
 ---@param msg string
-function api.pNotifyGroup(groupID, header, msg)
-    local group = groups[groupID]
+function api.pNotifyGroup(groupId, header, msg)
+    local group = api.findGroupById(groupId)
 
     if not group then
-        return lib.print.error('pNotifyGroup was sent an invalid groupID :'..groupID)
+        return lib.print.error('pNotifyGroup was sent an invalid groupId :'..groupId)
     end
 
     group:triggerGroupEvent('slrn_groups:client:CustomNotification', header or 'NO HEADER', msg or 'NO MSG')
@@ -43,10 +56,10 @@ utils.exportHandler('pNotifyGroup', api.pNotifyGroup)
 ---@param groupId number
 ---@param ... any
 function api.triggerGroupEvent(eventName, groupId, ...)
-    local group = groups[groupId]
+    local group = api.findGroupById(groupId)
 
     if not group then
-        return lib.print.error('triggerGroupEvent was sent an invalid groupID :'..groupId)
+        return lib.print.error('triggerGroupEvent was sent an invalid groupId :'..groupId)
     end
 
     group:triggerGroupEvent(eventName, ...)
@@ -67,14 +80,14 @@ utils.exportHandler('triggerGroupEvent', api.triggerGroupEvent)
 ---@field routeColor number?
 
 --- Creates a blip for all members of a group
----@param groupID number
+---@param groupId number
 ---@param name string
 ---@param data BlipData
-function api.CreateBlipForGroup(groupID, name, data)
-    local group = groups[groupID]
+function api.CreateBlipForGroup(groupId, name, data)
+    local group = api.findGroupById(groupId)
 
     if not group then
-        return lib.print.error('CreateBlipForGroup was sent an invalid groupID :'..groupID)
+        return lib.print.error('CreateBlipForGroup was sent an invalid groupId :'..groupId)
     end
 
     group:triggerGroupEvent('groups:createBlip', name, data)
@@ -82,13 +95,13 @@ end
 utils.exportHandler('CreateBlipForGroup', api.CreateBlipForGroup)
 
 --- Removes a blip for all members of a group
----@param groupID number
+---@param groupId number
 ---@param name string
-function api.RemoveBlipForGroup(groupID, name)
-    local group = groups[groupID]
+function api.RemoveBlipForGroup(groupId, name)
+    local group = api.findGroupById(groupId)
 
     if not group then
-        return lib.print.error('RemoveBlipForGroup was sent an invalid groupID :'..groupID)
+        return lib.print.error('RemoveBlipForGroup was sent an invalid groupId :'..groupId)
     end
 
     group:triggerGroupEvent('groups:removeBlip', name)
@@ -102,8 +115,8 @@ function api.GetGroupByMembers(src)
     if src then
         for i = 1, #groups do
             for j = 1, #groups[i].members do
-                if groups[i].members[j].Player == src then
-                    return i
+                if groups[i].members[j].playerId == src then
+                    return groups[i].id
                 end
             end
         end
@@ -112,13 +125,13 @@ end
 utils.exportHandler('GetGroupByMembers', api.GetGroupByMembers)
 
 --- Returns the group members of a given group
----@param groupID number
+---@param groupId number
 ---@return number[]?
-function api.getGroupMembers(groupID)
-    local group = groups[groupID]
+function api.getGroupMembers(groupId)
+    local group = api.findGroupById(groupId)
 
     if not group then
-        return lib.print.error('getGroupMembers was sent an invalid groupID :'..groupID)
+        return lib.print.error('getGroupMembers was sent an invalid groupId :'..groupId)
     end
 
     return group:getGroupMembers()
@@ -126,13 +139,13 @@ end
 utils.exportHandler('getGroupMembers', api.getGroupMembers)
 
 --- Returns the number of members in a given group
----@param groupID number
+---@param groupId number
 ---@return number?
-function api.getGroupSize(groupID)
-    local group = groups[groupID]
+function api.getGroupSize(groupId)
+    local group = api.findGroupById(groupId)
 
     if not group then
-        return lib.print.error('getGroupSize was sent an invalid groupID :'..groupID)
+        return lib.print.error('getGroupSize was sent an invalid groupId :'..groupId)
     end
 
     return #group.members
@@ -140,13 +153,13 @@ end
 utils.exportHandler('getGroupSize', api.getGroupSize)
 
 --- Returns the leader of a group
----@param groupID number
+---@param groupId number
 ---@return number?
-function api.GetGroupLeader(groupID)
-    local group = groups[groupID]
+function api.GetGroupLeader(groupId)
+    local group = api.findGroupById(groupId)
 
     if not group then
-        return lib.print.error('GetGroupLeader was sent an invalid groupID :'..groupID)
+        return lib.print.error('GetGroupLeader was sent an invalid groupId :'..groupId)
     end
 
     return group.leader
@@ -154,37 +167,42 @@ end
 utils.exportHandler('GetGroupLeader', api.GetGroupLeader)
 
 --- Destroys a group and removes it from the array
----@param groupID number
-function api.DestroyGroup(groupID)
-    local group = groups[groupID]
+---@param groupId number
+function api.DestroyGroup(groupId)
+    local group = api.findGroupById(groupId)
 
     if not group then
-        return lib.print.error('DestroyGroup was sent an invalid groupID :'..groupID)
+        return lib.print.error('DestroyGroup was sent an invalid groupId :'..groupId)
     end
 
     -- If more than just the leader is in the group, notify all members that the group has been disbanded
     if #group.members > 1 then
         for i = 1, #group.members do
-            local source = group.members[i].Player
+            local source = group.members[i].playerId
 
             if source ~= group.leader then
-                utils.notify(group.members[i].Player, 'The group has been disbanded', 'error')
+                utils.notify(group.members[i].playerId, 'The group has been disbanded', 'error')
             end
         end
     end
 
-    table.remove(groups, groupID)
+    for i = 1, #groups do
+        if groups[i].id == groupId then
+            table.remove(groups, i)
+            break
+        end
+    end
 
-    TriggerEvent('slrn_groups:server:GroupDeleted', groupID, group:getGroupMembers())
+    TriggerEvent('slrn_groups:server:GroupDeleted', groupId, group:getGroupMembers())
     lib.triggerClientEvent('slrn_groups:client:refreshGroups', -1, api.GetAllGroups())
 end
 utils.exportHandler('DestroyGroup', api.DestroyGroup)
 
-function api.AddMember(groupID, source)
-    local group = groups[groupID]
+function api.AddMember(groupId, source)
+    local group = api.findGroupById(groupId)
 
     if not group then
-        return lib.print.error('AddMember was sent an invalid groupID :'..groupID)
+        return lib.print.error('AddMember was sent an invalid groupId :'..groupId)
     end
 
     group:addMember(source)
@@ -201,7 +219,7 @@ function api.isPasswordCorrect(groupId, password)
     local group = groups?[groupId]
 
     if not group then
-        return lib.print.error('isPasswordCorrect was sent an invalid groupID :'..groupId)
+        return lib.print.error('isPasswordCorrect was sent an invalid groupId :'..groupId)
     end
 
     return group:getPassword() == password
@@ -211,13 +229,13 @@ end
 
 --- Checks if the player is the leader in the group
 ---@param src number
----@param groupID number
+---@param groupId number
 ---@return boolean?
-function api.isGroupLeader(src, groupID)
-    local group = groups[groupID]
+function api.isGroupLeader(src, groupId)
+    local group = api.findGroupById(groupId)
 
     if not group then
-        return lib.print.error('isGroupLeader was sent an invalid groupID :'..groupID)
+        return lib.print.error('isGroupLeader was sent an invalid groupId :'..groupId)
     end
 
     return group.leader == src
@@ -227,13 +245,13 @@ utils.exportHandler('isGroupLeader', api.isGroupLeader)
 
 ---Removes a player from a group
 ---@param source number
----@param groupID number
+---@param groupId number
 ---@return boolean?
-function api.RemovePlayerFromGroup(source, groupID)
-    local group = groups[groupID]
+function api.RemovePlayerFromGroup(source, groupId)
+    local group = api.findGroupById(groupId)
 
     if not group then
-        return lib.print.error('RemovePlayerFromGroup was sent an invalid groupID :'..groupID)
+        return lib.print.error('RemovePlayerFromGroup was sent an invalid groupId :'..groupId)
     end
 
 
@@ -241,14 +259,14 @@ function api.RemovePlayerFromGroup(source, groupID)
     for i = 1, memberCount do
         local member = group.members[i]
 
-        if member.Player == source then
+        if member.playerId == source then
             table.remove(group.members, i)
 
             lib.triggerClientEvent('slrn_groups:client:refreshGroups', -1, api.GetAllGroups())
 
             -- There are no more members in the group, destroy it
             if memberCount == 1 then
-                api.DestroyGroup(groupID)
+                api.DestroyGroup(groupId)
             end
 
             return true
@@ -259,14 +277,14 @@ function api.RemovePlayerFromGroup(source, groupID)
 end
 
 --- Sets the group status and stages
----@param groupID number
+---@param groupId number
 ---@param status 'WAITING' | 'IN_PROGRESS' | 'DONE'
 ---@param stages {id: number, name: string, isDone: boolean}[]
-function api.setJobStatus(groupID, status, stages)
-    local group = groups[groupID]
+function api.setJobStatus(groupId, status, stages)
+    local group = api.findGroupById(groupId)
 
     if not group then
-        return lib.print.error('setJobStatus was sent an invalid groupID :'..groupID)
+        return lib.print.error('setJobStatus was sent an invalid groupId :'..groupId)
     end
 
     group.status = status
@@ -277,13 +295,13 @@ end
 utils.exportHandler('setJobStatus', api.setJobStatus)
 
 --- Returns the group status
----@param groupID number
+---@param groupId number
 ---@return 'WAITING' | 'IN_PROGRESS' | 'DONE' | nil
-function api.getJobStatus(groupID)
-    local group = groups[groupID]
+function api.getJobStatus(groupId)
+    local group = api.findGroupById(groupId)
 
     if not group then
-        return lib.print.error('getJobStatus was sent an invalid groupID :'..groupID)
+        return lib.print.error('getJobStatus was sent an invalid groupId :'..groupId)
     end
 
     return group.status
@@ -291,12 +309,12 @@ end
 utils.exportHandler('getJobStatus', api.getJobStatus)
 
 --- Resets the group status and stages
----@param groupID number
-function api.resetJobStatus(groupID)
-    local group = groups[groupID]
+---@param groupId number
+function api.resetJobStatus(groupId)
+    local group = api.findGroupById(groupId)
 
     if not group then
-        return lib.print.error('resetJobStatus was sent an invalid groupID :'..groupID)
+        return lib.print.error('resetJobStatus was sent an invalid groupId :'..groupId)
     end
 
     group.status = 'WAITING'
@@ -307,13 +325,13 @@ end
 utils.exportHandler('resetJobStatus', api.resetJobStatus)
 
 --- Returns the group current stages
----@param groupID number
+---@param groupId number
 ---@return {id: number, name: string, isDone: boolean}[]?
-function api.GetGroupStages(groupID)
-    local group = groups[groupID]
+function api.GetGroupStages(groupId)
+    local group = api.findGroupById(groupId)
 
     if not group then
-        return lib.print.error('GetGroupStages was sent an invalid groupID :'..groupID)
+        return lib.print.error('GetGroupStages was sent an invalid groupId :'..groupId)
     end
 
     return group.stage
@@ -321,13 +339,13 @@ end
 utils.exportHandler('GetGroupStages', api.GetGroupStages)
 
 --- Returns whether or not the group is created by a script
----@param groupID number
+---@param groupId number
 ---@return boolean?
-function api.isGroupTemp(groupID)
-    local group = groups[groupID]
+function api.isGroupTemp(groupId)
+    local group = api.findGroupById(groupId)
 
     if not group then
-        return lib.print.error('isGroupTemp was sent an invalid groupID :'..groupID)
+        return lib.print.error('isGroupTemp was sent an invalid groupId :'..groupId)
     end
 
     return group.ScriptCreated or false
@@ -352,10 +370,10 @@ utils.exportHandler('getAllGroups', api.GetAllGroups)
 ---@param groupId number
 ---@return string[]?
 function api.GetGroupMembersNames(groupId)
-    local group = groups[groupId]
+    local group = api.findGroupById(groupId)
 
     if not group then
-        return lib.print.error('GetGroupMembersNames was sent an invalid groupID :'..groupId)
+        return lib.print.error('GetGroupMembersNames was sent an invalid groupId :'..groupId)
     end
 
     local members = {}
@@ -365,8 +383,8 @@ function api.GetGroupMembersNames(groupId)
 
         members[i] = {
             name = member.name,
-            Player = member.Player,
-            isLeader = member.Player == group.leader
+            playerId = member.playerId,
+            isLeader = member.playerId == group.leader
         }
     end
 
@@ -375,21 +393,21 @@ end
 utils.exportHandler('GetGroupMembersNames', api.GetGroupMembersNames)
 
 --- Changes the leader of a group
----@param groupID number
+---@param groupId number
 ---@return boolean?
-function api.ChangeGroupLeader(groupID)
-    local group = groups[groupID]
+function api.ChangeGroupLeader(groupId)
+    local group = api.findGroupById(groupId)
 
     if not group then
-        return lib.print.error('ChangeGroupLeader was sent an invalid groupID :'..groupID)
+        return lib.print.error('ChangeGroupLeader was sent an invalid groupId :'..groupId)
     end
 
     local members = group.members
 
     if #members > 1 then
         for i = 1, #members do
-            if members[i].Player ~= group.leader then
-                group.leader = members[i].Player
+            if members[i].playerId ~= group.leader then
+                group.leader = members[i].playerId
                 return true
             end
         end
@@ -404,14 +422,13 @@ end
 ---@param password string?
 ---@return number
 function api.CreateGroup(src, name, password)
-    local id = #groups + 1
+    groupIndex = groupIndex + 1
+    local id = groupIndex
 
     local group = group_class:new(id, name, password, src, true)
 
-    groups[id] = group
+    groups[#groups + 1] = group
 
-    lib.print.error('created group')
-    lib.print.error(api.GetAllGroups())
     -- Send non-sensitive data to all clients (id, name, memberCount)
     lib.triggerClientEvent('slrn_groups:client:refreshGroups', -1, api.GetAllGroups())
 

@@ -5,7 +5,7 @@
 ---@field public ScriptCreated boolean
 ---@field public status string
 ---@field public stage {id: number, name: string, isDone: boolean}[]
----@field public members {name: string, CID: number, Player: number}[]
+---@field public members {name: string, playerId: number}[]
 ---@field private private {password: string}
 local groups = lib.class('groups')
 
@@ -26,7 +26,7 @@ function groups:constructor(id, name, password, leader, ScriptCreated)
     self.members = {
         {
             name = GetPlayerName(leader),
-            Player = leader
+            playerId = leader
         }
     }
     self.stage = {}
@@ -39,7 +39,7 @@ end
 function groups:addMember(source)
     self.members[#self.members+1] = {
         name = GetPlayerName(source),
-        Player = source
+        playerId = source
     }
 end
 
@@ -59,7 +59,7 @@ function groups:refreshGroupStages()
     -- #TODO: remove the need of doing this, just alert that something changed and whenever they open the app do a callback?
     for i=1, #self.members do
         if self.members[i] then
-            local source = self.members[i].Player
+            local source = self.members[i].playerId
 
             TriggerClientEvent('slrn_groups:client:updateGroupStage', source, self.status, self.stage)
             TriggerClientEvent('slrn_groups:client:refreshGroups', source, self:getClientData(), true)
@@ -74,7 +74,7 @@ function groups:getGroupMembers()
     local members = {}
 
     for i = 1, #self.members do
-        members[i] = self.members[i].Player
+        members[i] = self.members[i].playerId
     end
 
     return members
@@ -96,7 +96,7 @@ function groups:triggerGroupEvent(eventName, ...)
     local payloadLen = #payload
 
     for i = 1, #self.members do
-        TriggerClientEventInternal(eventName, self.members[i].Player --[[@as string]], payload, payloadLen)
+        TriggerClientEventInternal(eventName, self.members[i].playerId --[[@as string]], payload, payloadLen)
     end
 end
 
