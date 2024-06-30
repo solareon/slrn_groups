@@ -51,7 +51,7 @@ jobs:
                 mkdir -p ./temp/${{ github.event.repository.name }}/ui
                 cp ./{README.md,LICENSE,fxmanifest.lua} ./temp/${{ github.event.repository.name }}
                 cp -r ./{client,bridge,server} ./temp/${{ github.event.repository.name }}
-                cp -r ./ui/{public,dist} ./temp/${{ github.event.repository.name }}/ui/
+                cp -r ./ui/dist ./temp/${{ github.event.repository.name }}/ui/
                 cd ./temp && zip -r ../${{ github.event.repository.name }}.zip ./${{ github.event.repository.name }}
                 
             - name: Upload Build Artifact

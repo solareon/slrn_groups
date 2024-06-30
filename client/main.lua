@@ -30,7 +30,7 @@ CreateThread(function()
             defaultApp = true,
             ui = GetCurrentResourceName() .. "/ui/dist/index.html",
             -- ui = "http://localhost:3000", -- for local ui build testing
-            icon = "https://cfx-nui-" .. GetCurrentResourceName() .. "/ui/public/icon.svg",
+            icon = "https://cfx-nui-" .. GetCurrentResourceName() .. "/ui/dist/icon.svg",
             fixBlur = true,
             onUse = function()
                 lib.callback('slrn_groups:server:getSetupAppData', false, function(setupAppData)
@@ -41,8 +41,8 @@ CreateThread(function()
                 end)
             end,
             images = { -- OPTIONAL array of screenshots of the app, used for showcasing the app
-            "https://cfx-nui-" .. GetCurrentResourceName() .. "/ui/public/screenshot-light.png",
-            "https://cfx-nui-" .. GetCurrentResourceName() .. "/ui/public/screenshot-dark.png"
+            "https://cfx-nui-" .. GetCurrentResourceName() .. "/ui/dist/screenshot-light.png",
+            "https://cfx-nui-" .. GetCurrentResourceName() .. "/ui/dist/screenshot-dark.png"
         },
         })
         if not added then
