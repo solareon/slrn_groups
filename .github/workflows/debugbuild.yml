@@ -48,7 +48,7 @@ jobs:
                 cp -r ./{client,bridge,server} ./temp/${{ github.event.repository.name }}
                 cp -r ./ui/dist ./temp/${{ github.event.repository.name }}/ui/
                 cd ./temp && zip -r ../${{ github.event.repository.name }}.zip ./${{ github.event.repository.name }}
-                
+
             - name: Upload Build Artifact
               uses: actions/upload-artifact@v4
               with:
