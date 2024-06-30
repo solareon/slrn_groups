@@ -1,20 +1,23 @@
-name: "Release Action"
+name: "Debug Build Action"
 
 on:
-  push:
-    tags:
-      - "v*"
+  workflow_dispatch:
+    inputs:
+      branch:
+        description: 'Branch to run the workflow on'
+        required: true
+        default: 'main'
 
 jobs:
-    release-action:
-        name: "Create Release"
+    debug-build:
+        name: "Create Debug Build"
         runs-on: "ubuntu-latest"
         steps:
             - name: Checkout Repository
               uses: actions/checkout@v4
               with:
                 fetch-depth: 0
-                ref: ${{ github.event.repository.default_branch }}
+                ref: ${{ github.event.inputs.branch }}
 
             - name: Install ZIP
               run: sudo apt install zip
@@ -50,18 +53,9 @@ jobs:
                 cp -r ./{client,bridge,server} ./temp/${{ github.event.repository.name }}
                 cp -r ./ui/public ./temp/${{ github.event.repository.name }}/ui/public
                 cd ./temp && zip -r ../${{ github.event.repository.name }}.zip ./${{ github.event.repository.name }}
-
-            - name: Get App Token
-              uses: actions/create-github-app-token@v1
-              id: generate_token
+                
+            - name: Upload Build Artifact
+              uses: actions/upload-artifact@v4
               with:
-                app-id: ${{ secrets.APP_ID }}
-                private-key: ${{ secrets.PRIVATE_KEY }}
-
-            - name: Create Release
-              uses: marvinpinto/action-automatic-releases@latest
-              with:
-                title: ${{ github.ref_name }}
-                repo_token: '${{ steps.generate_token.outputs.token }}'
-                prerelease: false
-                files: ${{ github.event.repository.name }}.zip
+                name: ${{ github.event.repository.name }}.zip
+                path: ./temp/

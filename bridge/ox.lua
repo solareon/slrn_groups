@@ -1,5 +1,7 @@
 if GetResourceState('ox_core') ~= 'started' then return end
 
+if not IsDuplicityVersion() then return end
+
 local Ox = require '@ox_core.lib.init'
 
 ---Get the player data from the source

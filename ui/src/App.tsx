@@ -24,8 +24,8 @@ const App = () => {
     onSettingsChange,
   } = window as any;
   const [currentPage, setCurrentPage] = useState("GroupDashboard");
-  const { inGroup, currentGroup, setGroups, setIsLeader, setCurrentGroup } = useGroupStore();
-  const { playerData, setPlayerData } = usePlayerDataStore();
+  const { inGroup, currentGroup } = useGroupStore();
+  const { playerData } = usePlayerDataStore();
 
   useEffect(() => {
     if (devMode) {
@@ -39,24 +39,10 @@ const App = () => {
   }, [theme]);
 
   useEffect(() => {
-    fetchNui("getPlayerData").then((data) => {
-      setPlayerData(data);
-    });
-
-    fetchNui<Group[]>("getGroupData").then((data) => setGroups(data));
-  }, []);
-
-  useEffect(() => {
     if (!inGroup) {
       setCurrentPage("GroupDashboard");
     }
   }, [inGroup]);
-
-  useEffect(() => {
-    if (currentGroup) {
-      setIsLeader(currentGroup.some((member) => member.playerId === playerData.source && member.isLeader));
-    }
-  }, [currentGroup]);
 
   useNuiEvent("startJob", () => {
     setCurrentPage("GroupJob");

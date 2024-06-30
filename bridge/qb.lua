@@ -1,5 +1,7 @@
 if GetResourceState('qb-core') ~= 'started' or GetResourceState('qbx_core') == 'started' then return end
 
+if not IsDuplicityVersion() then return end
+
 local QBCore = exports['qb-core']:GetCoreObject()
 
 function GetPlayerData(source)

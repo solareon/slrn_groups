@@ -1,5 +1,21 @@
 local identifier = 'slrn_groups'
 
+local function sendCustomAppMessage(action, data)
+    exports['lb-phone']:SendCustomAppMessage(
+        identifier, {
+            action = action,
+            data = data
+    })
+end
+
+local function sendNotification(message, title)
+    exports['lb-phone']:SendNotification({
+        app = identifier,
+        title = title or nil,
+        content = message,
+    })
+end
+
 CreateThread(function()
     while GetResourceState('lb-phone') ~= 'started' do
         Wait(500)
@@ -16,6 +32,14 @@ CreateThread(function()
             -- ui = "http://localhost:3000", -- for local ui build testing
             icon = "https://cfx-nui-" .. GetCurrentResourceName() .. "/ui/public/icon.svg",
             fixBlur = true,
+            onUse = function()
+                lib.callback('slrn_groups:server:getSetupAppData', false, function(setupAppData)
+                    sendCustomAppMessage('setupApp', setupAppData)
+                    if setupAppData.groupStatus == 'IN_PROGRESS' then
+                        sendCustomAppMessage('startJob', {})
+                    end
+                end)
+            end,
             images = { -- OPTIONAL array of screenshots of the app, used for showcasing the app
             "https://cfx-nui-" .. GetCurrentResourceName() .. "/ui/public/screenshot-light.png",
             "https://cfx-nui-" .. GetCurrentResourceName() .. "/ui/public/screenshot-dark.png"
@@ -43,30 +67,7 @@ RegisterNuiCallback('getPlayerData', function(_, cb)
 end)
 
 RegisterNuiCallback('getGroupData', function(_, cb)
-    local groups, inGroup, groupStatus, groupStages = lib.callback.await('slrn_groups:server:getAllGroups')
-    if groups then
-        cb(groups)
-    end
-    exports['lb-phone']:SendCustomAppMessage(identifier, {
-        action = 'setInGroup',
-        data = inGroup or false
-    })
-    local groupData = lib.callback.await('slrn_groups:server:getGroupMembersNames', false)
-    exports['lb-phone']:SendCustomAppMessage(identifier, {
-        action = 'setCurrentGroup',
-        data = groupData or {}
-    })
-    exports['lb-phone']:SendCustomAppMessage(identifier, {
-        action = 'setGroupJobSteps',
-        data = groupStages or {}
-    })
-    if groupStatus == 'IN_PROGRESS' then
-        exports['lb-phone']:SendCustomAppMessage(identifier, {
-            action = 'startJob',
-            data = {}
-        })
-    end
-    cb({})
+    --noop
 end)
 
 RegisterNuiCallback('getGroupJobSteps', function(_, cb)
@@ -81,31 +82,19 @@ end)
 
 RegisterNuiCallback('joinGroup', function(data, cb)
     local message = lib.callback.await('slrn_groups:server:joinGroup', false, data)
-
-    exports['lb-phone']:SendNotification({
-        app = identifier,
-        content = message,
-    })
+    sendNotification(message)
     cb({})
 end)
 
 RegisterNuiCallback('leaveGroup', function(_, cb)
     local message = lib.callback.await('slrn_groups:server:leaveGroup')
-
-    exports['lb-phone']:SendNotification({
-        app = identifier,
-        content = message,
-    })
+    sendNotification(message)
     cb({})
 end)
 
 RegisterNuiCallback('deleteGroup', function(_, cb)
     local message = lib.callback.await('slrn_groups:server:deleteGroup')
-
-    exports['lb-phone']:SendNotification({
-        app = identifier,
-        content = message,
-    })
+    sendNotification(message)
     cb({})
 end)
 
@@ -115,43 +104,22 @@ RegisterNUICallback('getMemberList', function(_, cb)
 end)
 
 RegisterNUICallback('removeGroupMember', function (data, cb)
-    TriggerServerEvent('slrn_groups:server:removeGroupMember', data)
-    cb({})
-end)
-
-RegisterNUICallback('promoteGroupMember', function (data, cb)
-    TriggerServerEvent('slrn_groups:server:promoteGroupMember', data)
+    local message = lib.callback.await('slrn_groups:server:removeGroupMember', false, data)
+    sendNotification(message)
     cb({})
 end)
 
 RegisterNetEvent('slrn_groups:client:refreshGroups', function(groupData)
     local currentGroupData, inGroup = lib.callback.await('slrn_groups:server:getGroupMembersNames', false)
-    exports['lb-phone']:SendCustomAppMessage(identifier, {
-        action = 'setCurrentGroup',
-        data = currentGroupData or {}
-    })
-    exports['lb-phone']:SendCustomAppMessage(identifier, {
-        action = 'setInGroup',
-        data = inGroup or 0
-    })
-    exports['lb-phone']:SendCustomAppMessage(identifier, {
-        action = 'setGroups',
-        data = groupData,
-    })
+    sendCustomAppMessage('setCurrentGroup', currentGroupData or {})
+    sendCustomAppMessage('setInGroup', inGroup or false)
+    sendCustomAppMessage('setGroups', groupData)
 end)
 
 RegisterNetEvent('slrn_groups:client:updateGroupStage', function(_, stage)
-    groupStage = stage
-    exports['lb-phone']:SendCustomAppMessage(identifier, {
-        action = 'setGroupJobSteps',
-        data = stage
-    })
+    sendCustomAppMessage('setGroupJobSteps', stage)
 end)
 
 RegisterNetEvent('slrn_groups:client:CustomNotification', function(header, msg)
-    exports['lb-phone']:SendNotification({
-        app = identifier,
-        title = header,
-        content = msg,
-    })
+    sendNotification(msg, header)
 end)

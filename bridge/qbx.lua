@@ -1,5 +1,7 @@
 if GetResourceState('qbx_core') ~= 'started' then return end
 
+if not IsDuplicityVersion() then return end
+
 function GetPlayerData(source)
     return exports.qbx_core:GetPlayer(source).PlayerData
 end

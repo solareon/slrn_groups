@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useNuiEvent } from "../hooks/useNuiEvent";
 import { usePlayerDataStore } from "../storage/PlayerDataStore";
 import { useGroupStore } from "../storage/GroupStore";
@@ -6,7 +6,7 @@ import { useGroupJobStepStore } from "../storage/GroupJobStepStore";
 
 const DataHandler: React.FC = () => {
   const { setPlayerData } = usePlayerDataStore();
-  const { setGroups, setCurrentGroup, setInGroup } = useGroupStore();
+  const { setGroups, setIsLeader, setCurrentGroup, setInGroup } = useGroupStore();
   const { setGroupJobSteps } = useGroupJobStepStore();
 
   useNuiEvent("setPlayerData", setPlayerData);
@@ -24,6 +24,20 @@ const DataHandler: React.FC = () => {
         step.id === data.id ? { ...step, isDone: data.isDone } : step
       )
     );
+  });
+  useNuiEvent("setupApp", (data) => {
+    if (!data) {
+      console.error("Invalid setupApp data", data);
+      return;
+    }
+    setPlayerData(data.playerData);
+    setGroups(data.groups);
+    setCurrentGroup(data.groupData);
+    setInGroup(data.inGroup);
+    setGroupJobSteps(data.groupJobSteps);
+    if (data.groupData && data.playerData) {
+      setIsLeader(data.groupData.some((member) => member.playerId === data.playerData.source && member.isLeader));
+    }
   });
 
   return null; // This component doesn't render anything
