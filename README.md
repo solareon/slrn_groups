@@ -4,7 +4,7 @@ A group app for [lb-phone](https://lbphone.com/) the provides `qb-phone` compati
 **QBOX/QB/ESX/ND/OX supported with bridge**
 
 ## Installation
-Download the [release version](https://github.com/solareon/slrn_groups/release) and copy to your server.
+Download the [release version](https://github.com/solareon/slrn_groups/releases) and copy to your server.
 
 # Support
 - [Discord](https://discord.gg/TZFBBHvG6E)
