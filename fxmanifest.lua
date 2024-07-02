@@ -22,11 +22,10 @@ shared_scripts {
 
 
 files {
-    "ui/dist/**/*",
-    "ui/public/**"
+    "ui/build/**/*",
 }
 
-ui_page "ui/dist/index.html"
+ui_page "ui/build/index.html"
 
 dependency '/assetpacks'
 

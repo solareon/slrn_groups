@@ -2,7 +2,6 @@
   "name": "slrn_groups",
   "homepage": "web/build",
   "private": true,
-  "type": "module",
   "version": "2.0.0",
   "scripts": {
     "start": "vite",
