@@ -3,8 +3,8 @@ A group app for [lb-phone](https://lbphone.com/) the provides `qb-phone` compati
 
 **QBOX/QB/ESX/ND/OX supported with bridge**
 
-![CI](https://github.com/solareon/slrn_groups/workflows/ci.yml/badge.svg)
-![Lint](https://github.com/solareon/slrn_groups/workflows/lint.yml/badge.svg)
+![CI](https://github.com/solareon/slrn_groups/actions/workflows/ci.yml/badge.svg)
+![Lint](https://github.com/solareon/slrn_groups/actions/workflows/lint.yml/badge.svg)
 
 ## Installation
 Download the [release version](https://github.com/solareon/slrn_groups/releases) and copy to your server.
