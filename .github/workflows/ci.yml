@@ -12,12 +12,21 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
         with:
-          fetch-depth: 2
+          fetch-depth: 0
+
+      - name: Get Commit Range
+        id: get_commit_range
+        run: |
+          if [ "${{ github.event_name }}" == "push" ]; then
+            echo "commit_range=${{ github.event.before }}...${{ github.sha }}" >> $GITHUB_ENV
+          else
+            echo "commit_range=${{ github.event.pull_request.base.sha }}...${{ github.sha }}" >> $GITHUB_ENV
+          fi
 
       - name: Check for changes in UI directory
         id: check_changes
         run: |
-          if git diff --quiet HEAD^ HEAD -- ui; then
+          if git diff --quiet ${{ env.commit_range }} -- ui; then
             echo "No changes in UI directory. Skipping step."
             echo "skip_step=true" >> $GITHUB_ENV
           else
@@ -50,4 +59,3 @@ jobs:
         working-directory: ui
         env:
           CI: true
-
