@@ -9,15 +9,15 @@ interface GroupStore {
   inGroup: number | null;
   isLeader: boolean;
   setGroups: (currentGroups: Group[]) => void;
-  setCurrentGroup: (currentGroup: Group) => void;
-  setInGroup: (inGroup: boolean) => void;
+  setCurrentGroup: (currentGroup: Member[]) => void;
+  setInGroup: (inGroup: number | null) => void;
   setIsLeader: (isLeader: boolean) => void;
 }
 
 export const useGroupStore = create<GroupStore>((set) => ({
   currentGroups: [],
   currentGroup: [],
-  inGroup: false,
+  inGroup: null,
   isLeader: false,
   setGroups: (data) => {
     set({ currentGroups: data });

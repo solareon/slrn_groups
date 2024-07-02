@@ -1,11 +1,8 @@
 import { create } from 'zustand';
+import { PlayerData } from '../types/PlayerData';
 
-interface PlayerData {
-  source: number;
-}
-
-interface PlayerDataStore {
-  playerData: PlayerData;
+type PlayerDataStore = {
+  playerData: PlayerData | null;
   setPlayerData: (data: PlayerData) => void;
 }
 

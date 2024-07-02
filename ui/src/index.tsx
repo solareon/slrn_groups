@@ -1,26 +1,15 @@
-import React from 'react'
-import ReactDOM from 'react-dom/client'
-import App from './App'
+import React from 'react';
+import ReactDOM from 'react-dom/client';
+import { VisibilityProvider } from './providers/VisibilityProvider';
+import App from './components/App';
+import DataHandler from './components/DataHandler';
+import './index.css';
 
-import './index.css'
-
-const devMode = !window?.['invokeNative']
-const root = ReactDOM.createRoot(document.getElementById('root'))
-
-if (window.name === '' || devMode) {
-	const renderApp = () => {
-		root.render(
-			<React.StrictMode>
-				<App />
-			</React.StrictMode>
-		)
-	}
-
-	if (devMode) {
-		renderApp()
-	} else {
-		window.addEventListener('message', (event) => {
-			if (event.data === 'componentsLoaded') renderApp()
-		})
-	}
-}
+ReactDOM.createRoot(document.getElementById('root')!).render(
+  <React.StrictMode>
+    <VisibilityProvider>
+      <App />
+      <DataHandler />
+    </VisibilityProvider>
+  </React.StrictMode>,
+);

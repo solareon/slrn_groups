@@ -1,8 +1,17 @@
 if GetResourceState('qb-core') ~= 'started' or GetResourceState('qbx_core') == 'started' then return end
 
-if not IsDuplicityVersion() then return end
-
 local QBCore = exports['qb-core']:GetCoreObject()
+
+if not IsDuplicityVersion() then
+    function SendNotification(message, title)
+        QBCore.Functions.Notify(title and {text = title, caption = message} or message, 'primary', 5000)
+    end
+    return
+end
+
+function SendNotification(source, message, title)
+    TriggerClientEvent('QBCore:Notify', source, title and {text = title, caption = message} or message, 'primary', 5000)
+end
 
 function GetPlayerData(source)
     local player = QBCore.Functions.GetPlayer(source)

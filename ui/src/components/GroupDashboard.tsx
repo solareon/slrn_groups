@@ -4,6 +4,8 @@ import JoinGroup from "./JoinGroup";
 import PlayerList from "./PlayerList";
 import ConfirmationDialog from "./ConfirmationDialog";
 import { Group } from "../types/Group";
+import { Member } from "../types/Member";
+import { ConfirmationMessage } from "../types/ConfirmationMessage";
 import { usePlayerDataStore } from "../storage/PlayerDataStore";
 import { useGroupStore } from "../storage/GroupStore";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -14,26 +16,41 @@ import {
   faUserGroup,
   faRightFromBracket,
 } from "@fortawesome/free-solid-svg-icons";
+import { fetchNui } from "../utils/fetchNui";
 
-const GroupDashboard = ({ setCurrentPage, fetchNui }) => {
+interface GroupDashboardProps {
+  setCurrentPage: (page: string) => void;
+}
+
+const GroupDashboard: React.FC<GroupDashboardProps> = ({ setCurrentPage }) => {
   const { currentGroups, currentGroup, inGroup, isLeader } = useGroupStore();
   const { playerData } = usePlayerDataStore();
   const [showCreateGroup, setShowCreateGroup] = useState(false);
   const [showPlayerList, setShowPlayerList] = useState(false);
-  const [selectedGroup, setSelectedGroup] = useState(null);
+  const [selectedGroup, setSelectedGroup] = useState<Group | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [confirmation, setConfirmation] = useState({ message: null, type: null });
+  const [confirmation, setConfirmation] = useState<ConfirmationMessage>({ message: null, type: null });
+
+  const isInGroup = inGroup !== null && inGroup > 0;
 
   const handleConfirm = () => {
-    fetchNui(confirmation.type);
+    if (confirmation.type !== null) {
+      fetchNui(confirmation.type);
+    }
     setIsDialogOpen(false);
   };
 
-  const createGroup = (groupData) => {
-    fetchNui("createGroup", {name: groupData.groupName, pass: groupData.password});
+  type GroupData = {
+    groupName: string;
+    groupId: number;
+    password: string;
   };
 
-  const joinGroup = (groupData) => {
+  const createGroup = (groupData: GroupData) => {
+    fetchNui("createGroup", { name: groupData.groupName, pass: groupData.password });
+  };
+
+  const joinGroup = (groupData: GroupData) => {
     fetchNui("joinGroup", {id: groupData.groupId, pass: groupData.password});
   };
 
@@ -42,12 +59,12 @@ const GroupDashboard = ({ setCurrentPage, fetchNui }) => {
     setIsDialogOpen(true);
   };
 
-  const deleteGroup = (groupData) => {
+  const deleteGroup = () => {
     setConfirmation({message: "Disband the group?", type: "deleteGroup"})
     setIsDialogOpen(true);
   };
 
-  const renderIcons = (isLeader, isMember, group) => {
+  const renderIcons = (isLeader: boolean, isMember: boolean, group: Group) => {
     return (
       <>
         <div className="flex items-center">
@@ -62,14 +79,14 @@ const GroupDashboard = ({ setCurrentPage, fetchNui }) => {
               icon={faTrash}
               className="mx-1 hover:text-danger"
               size="xl"
-              onClick={() => deleteGroup(group)}
+              onClick={() => deleteGroup()}
             />
           )}
           {isMember && !isLeader && (
             <FontAwesomeIcon
               icon={faRightFromBracket}
               className="mx-1 hover:text-danger"
-              onClick={() => leaveGroup(group)}
+              onClick={() => leaveGroup()}
               size="xl"
             />
           )}
@@ -84,25 +101,25 @@ const GroupDashboard = ({ setCurrentPage, fetchNui }) => {
         <div className="mb-4 flex gap-x-2">
           <button
             onClick={() => setShowCreateGroup(true)}
-            disabled={inGroup}
+            disabled={isInGroup}
             className={`py-2 w-1/3 text-lg bg-primary rounded
-              ${inGroup ? "cursor-not-allowed" : "hover:bg-secondary"}`}
+              ${isInGroup ? "cursor-not-allowed" : "hover:bg-secondary"}`}
           >
             Create Group
           </button>
           <button
             onClick={() => setCurrentPage("GroupJob")}
-            disabled={!inGroup}
+            disabled={!isInGroup}
             className={`py-2 w-1/3 text-lg bg-primary rounded
-              ${!inGroup ? "cursor-not-allowed" : "hover:bg-secondary"}`}
+              ${!isInGroup ? "cursor-not-allowed" : "hover:bg-secondary"}`}
           >
             Show Tasks
           </button>
           <button
             onClick={() => leaveGroup()}
-            disabled={!inGroup}
+            disabled={!isInGroup}
             className={`py-2 w-1/3 text-lg bg-primary rounded
-              ${!inGroup ? "cursor-not-allowed" : "hover:bg-danger"}`}
+              ${!isInGroup ? "cursor-not-allowed" : "hover:bg-danger"}`}
           >
             Leave Group
           </button>
@@ -124,10 +141,10 @@ const GroupDashboard = ({ setCurrentPage, fetchNui }) => {
                 <div
                   key={index}
                   className={`p-4 bg-secondary rounded-md flex justify-between items-center mb-2 ${
-                    !inGroup && "hover:bg-accent"
+                    !isInGroup && "hover:bg-accent"
                   }`}
                   onClick={() => {
-                    if (!inGroup) {
+                    if (!isInGroup) {
                       setSelectedGroup(group);
                     }
                   }}
@@ -153,7 +170,7 @@ const GroupDashboard = ({ setCurrentPage, fetchNui }) => {
         )}
         {showCreateGroup && (
           <CreateGroup
-            onSelect={(groupData) => {
+            onSelect={(groupData: GroupData) => {
               createGroup(groupData);
               setShowCreateGroup(false);
             }}
@@ -164,7 +181,7 @@ const GroupDashboard = ({ setCurrentPage, fetchNui }) => {
           <JoinGroup
             groupId={selectedGroup.id}
             groupName={selectedGroup.name}
-            onSelect={(groupData) => {
+            onSelect={(groupData: GroupData) => {
               joinGroup(groupData);
               setSelectedGroup(null);
             }}
@@ -176,15 +193,13 @@ const GroupDashboard = ({ setCurrentPage, fetchNui }) => {
         {showPlayerList && (
           <PlayerList
             onClose={() => setShowPlayerList(false)}
-            fetchNui={fetchNui}
-            currentGroup={currentGroup}
           />
         )}
         {isDialogOpen && (
           <ConfirmationDialog
             onClose={() => setIsDialogOpen(false)}
             onConfirm={handleConfirm}
-            confirmation={confirmation}
+            confirmation={{ ...confirmation, message: confirmation.message || "Default message" }}
           />
         )}
       </div>

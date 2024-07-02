@@ -1,6 +1,16 @@
 import React from 'react';
 
-const ConfirmationDialog = ({ onClose, onConfirm, confirmation}) => {
+interface Confirmation {
+  message: string;
+}
+
+interface ConfirmationDialogProps {
+  onClose: () => void;
+  onConfirm: () => void;
+  confirmation: Confirmation;
+}
+
+const ConfirmationDialog: React.FC<ConfirmationDialogProps> = ({ onClose, onConfirm, confirmation }) => {
   return (
     <div className="fixed inset-0 bg-black bg-opacity-75 flex justify-center items-center">
       <div className="bg-background border border-primary rounded-lg p-6 w-11/12">

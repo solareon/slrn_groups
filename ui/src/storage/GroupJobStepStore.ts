@@ -8,5 +8,5 @@ interface GroupJobStepStore {
 
 export const useGroupJobStepStore = create<GroupJobStepStore>((set) => ({
   groupJobSteps: [],
-  setGroupJobSteps: (data) => set({ groupJobSteps: data }),
+  setGroupJobSteps: (data: GroupJobStep[]) => set({ groupJobSteps: data }),
 }));
