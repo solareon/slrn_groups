@@ -11,16 +11,22 @@ repository 'https://github.com/solareon/slrn_groups'
 
 client_scripts {
     'client/**/*',
-    '@qbx_core/modules/playerdata.lua' -- remove if using qb-core but you really should switch to qbox
 }
+
 server_script 'server/**/*'
-shared_script '@ox_lib/init.lua'
+
+shared_scripts {
+    '@ox_lib/init.lua',
+    'bridge/*.lua'
+}
+
 
 files {
-    'ui/**/*'
+    "ui/dist/**/*",
+    "ui/public/**"
 }
 
-ui_page 'ui/index.html'
+ui_page "ui/dist/index.html"
 
 dependency '/assetpacks'
 

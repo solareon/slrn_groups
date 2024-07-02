@@ -7,15 +7,27 @@ jobs:
         steps:
             - uses: actions/checkout@v4
               with:
+                  fetch-depth: 2
                   ref: ${{ github.event.pull_request.head.sha }}
+            - name: Check for lua changes
+              id: check_changes
+              run: |
+                if git diff --quiet HEAD^ HEAD -- '*.lua'; then
+                  echo "No changes to lua files. Skipping step."
+                  echo "skip_step=true" >> $GITHUB_ENV
+                else
+                  echo "Changes detected to lua files. Proceeding with step."
+                  echo "skip_step=false" >> $GITHUB_ENV
+                fi
             - name: Lint
+              if: env.skip_step == 'false'
               uses: iLLeniumStudios/fivem-lua-lint-action@v2
               with:
                   capture: "junit.xml"
                   args: "-t --formatter JUnit"
                   extra_libs: ox_lib+mysql+qblocales+qbox+qbox_playerdata+qbox_lib
             - name: Generate Lint Report
-              if: always()
+              if: env.skip_step == 'false'
               uses: mikepenz/action-junit-report@v4
               with:
                   report_paths: "**/junit.xml"

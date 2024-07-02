@@ -1,0 +1,61 @@
+name: Main CI
+on: [push, pull_request]
+jobs:
+  build:
+    name: Build Test
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ui
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Get Commit Range
+        id: get_commit_range
+        run: |
+          if [ "${{ github.event_name }}" == "push" ]; then
+            echo "commit_range=${{ github.event.before }}...${{ github.sha }}" >> $GITHUB_ENV
+          else
+            echo "commit_range=${{ github.event.pull_request.base.sha }}...${{ github.sha }}" >> $GITHUB_ENV
+          fi
+
+      - name: Check for changes in UI directory
+        id: check_changes
+        run: |
+          if git diff --quiet ${{ env.commit_range }} -- ui; then
+            echo "No changes in UI directory. Skipping step."
+            echo "skip_step=true" >> $GITHUB_ENV
+          else
+            echo "Changes detected in UI directory. Proceeding with step."
+            echo "skip_step=false" >> $GITHUB_ENV
+          fi
+
+      - name: Install pnpm
+        if: env.skip_step == 'false'
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - name: Setup node environment
+        if: env.skip_step == 'false'
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20.x
+          cache: "pnpm"
+          cache-dependency-path: "ui/pnpm-lock.yaml"
+
+      - name: Install deps
+        if: env.skip_step == 'false'
+        run: pnpm install --frozen-lockfile
+        working-directory: ui
+
+      - name: Try build
+        if: env.skip_step == 'false'
+        run: pnpm build
+        working-directory: ui
+        env:
+          CI: true
