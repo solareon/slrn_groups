@@ -1,10 +1,10 @@
 # slrn_groups
-A group app for [lb-phone](https://lbphone.com/) the provides `qb-phone` compatible exports. This should work with most resources that expect a `qb-phone` style group.
+![CI](https://github.com/solareon/slrn_groups/actions/workflows/ci.yml/badge.svg?branch=standalone)
+![Lint](https://github.com/solareon/slrn_groups/actions/workflows/lint.yml/badge.svg?branch=standalone)
+
+A group app that provides `qb-phone` compatible exports. This should work with most resources that expect a `qb-phone` style group. This is the standalone branch that does not directly interface with a phone.
 
 **QBOX/QB/ESX/ND/OX supported with bridge**
-
-![CI](https://github.com/solareon/slrn_groups/actions/workflows/ci.yml/badge.svg)
-![Lint](https://github.com/solareon/slrn_groups/actions/workflows/lint.yml/badge.svg)
 
 ## Installation
 Download the [release version](https://github.com/solareon/slrn_groups/releases) and copy to your server.
@@ -14,7 +14,6 @@ Download the [release version](https://github.com/solareon/slrn_groups/releases)
 
 # Credits
 - [FjamZoo](https://github.com/FjamZoo) for rewriting groups layer
-- [RijayJH](https://github.com/RijayJH/rj_groups-for-lb_phone) for original idea
 - [overextended](https://github.com/overextended) for ox_lib
 
 # Dependencies
