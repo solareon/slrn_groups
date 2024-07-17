@@ -48,7 +48,7 @@ jobs:
                 mkdir -p ./temp/${{ github.event.repository.name }}/ui
                 cp ./{README.md,LICENSE,fxmanifest.lua} ./temp/${{ github.event.repository.name }}
                 cp -r ./{client,bridge,server} ./temp/${{ github.event.repository.name }}
-                cp -r ./ui/public ./temp/${{ github.event.repository.name }}/ui/public
+                cp -r ./ui/dist ./temp/${{ github.event.repository.name }}/ui/dist
                 cd ./temp && zip -r ../${{ github.event.repository.name }}.zip ./${{ github.event.repository.name }}
 
             - name: Get App Token
