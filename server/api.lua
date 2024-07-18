@@ -216,7 +216,7 @@ utils.exportHandler('AddMember', api.AddMember)
 ---@param password string
 ---@return boolean?
 function api.isPasswordCorrect(groupId, password)
-    local group = groups?[groupId]
+    local group = api.findGroupById(groupId)
 
     if not group then
         return lib.print.error('isPasswordCorrect was sent an invalid groupId :'..groupId)
