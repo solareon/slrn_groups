@@ -30,38 +30,31 @@ const PlayerList: React.FC = ({ onClose, fetchNui }) => {
                         return (
                             <div
                                 key={index}
-                                className="flex p-3 items-center rounded-md my-2 gap-x-2 bg-secondary"
+                                className="flex p-3 items-center rounded-md my-2 gap-x-2 bg-primary"
                             >
-                                <FontAwesomeIcon icon={faUser} size="xl" />
-                                <>
-                                    {isLeader &&
-                                        member.playerId !==
-                                            playerData.source && (
-                                            <>
-                                                <FontAwesomeIcon
-                                                    icon={faTrash}
-                                                    className="self-right hover:text-danger"
-                                                    size="xl"
-                                                    onClick={() =>
-                                                        removeGroupMember(
-                                                            member
-                                                        )
-                                                    }
-                                                />
-                                            </>
-                                        )}
-                                </>
-                                <span className="text-xl">{member.name}</span>
+                                <FontAwesomeIcon icon={faUser} size="sm" />
+                                <span className="text-lg border-l pl-4 flex justify-between w-full items-center">{member.name}{(isLeader && member.playerId !== playerData.source) && (
+                                    <FontAwesomeIcon
+                                    icon={faTrash}
+                                    className="self-right hover:text-danger"
+                                    size="sm"
+                                    onClick={() =>
+                                        removeGroupMember(
+                                            member
+                                        )
+                                    }
+                                    />
+                                )}</span>
                             </div>
                         );
                     })}
                 </div>
                 <div className="pb-4 px-4 rounded-b-md">
                     <button
-                        className="w-full py-2 bg-secondary hover:bg-accent rounded-lg"
+                        className="w-full py-2 bg-primary rounded-lg hover:scale-105"
                         onClick={onClose}
                     >
-                        RETURN
+                        Return
                     </button>
                 </div>
             </div>

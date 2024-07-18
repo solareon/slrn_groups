@@ -4,6 +4,7 @@ import { faXmark } from "@fortawesome/free-solid-svg-icons";
 
 const CreateGroup: React.FC<any> = ({ onSelect, onClose }) => {
   const [groupName, setGroupName] = useState("");
+  const [first, setFirst] = useState(true);
   const [disabledReason, setDisabledReason] = useState("");
   const [password, setPassword] = useState("");
   const [verifyPassword, setVerifyPassword] = useState("");
@@ -18,7 +19,12 @@ const CreateGroup: React.FC<any> = ({ onSelect, onClose }) => {
     } else if (password !== verifyPassword) {
       reason = "Passwords do not match";
     }
-    setDisabledReason(reason);
+    if(first) {
+      setFirst(false);
+      setDisabledReason('')
+    } else {
+      setDisabledReason(reason);
+    }
     setIsSubmitDisabled(reason !== "");
   }, [password, verifyPassword, groupName]);
 
@@ -32,13 +38,13 @@ const CreateGroup: React.FC<any> = ({ onSelect, onClose }) => {
     <div className="fixed inset-0 bg-black bg-opacity-75 flex justify-center items-center">
       <div
         className="bg-background
-       border border-border-primary-light dark:border-none p-6 rounded-lg shadow-md w-11/12"
+       dark:border-none p-6 rounded-lg shadow-md w-11/12"
       >
         <div className="flex justify-between items-center mb-4">
-          <h2 className="text-2xl font-bold">Create Group</h2>
+          <h2 className="text-3xl font-light">Create Group</h2>
           <FontAwesomeIcon icon={faXmark} onClick={onClose} size="2xl"/>
         </div>
-        <form className="text-left text-xl" onSubmit={handleSubmit}>
+        <form className="text-left text-xl font-extralight" onSubmit={handleSubmit}>
           <div className="mb-4">
             <label htmlFor="groupName" className="block mb-2">
               Group Name
@@ -48,7 +54,7 @@ const CreateGroup: React.FC<any> = ({ onSelect, onClose }) => {
               id="groupName"
               value={groupName}
               onChange={(e) => setGroupName(e.target.value)}
-              className="w-full p-2 rounded bg-secondary border dark:border-none border-secondary"
+              className="w-full p-2 rounded bg-primary focus-visible:outline-none focus:scale-105 hover:scale-105 transition-all"
             />
           </div>
           <div className="mb-4">
@@ -60,7 +66,7 @@ const CreateGroup: React.FC<any> = ({ onSelect, onClose }) => {
               id="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full p-2 rounded bg-secondary border dark:border-none border-secondary"
+              className="w-full p-2 rounded bg-primary focus-visible:outline-none focus:scale-105 hover:scale-105 transition-all"
             />
           </div>
           <div className="mb-4">
@@ -72,32 +78,32 @@ const CreateGroup: React.FC<any> = ({ onSelect, onClose }) => {
               id="verifyPassword"
               value={verifyPassword}
               onChange={(e) => setVerifyPassword(e.target.value)}
-              className="w-full p-2 rounded bg-secondary border dark:border-none border-secondary"
+              className="w-full p-2 rounded bg-primary focus-visible:outline-none focus:scale-105 hover:scale-105 transition-all"
             />
           </div>
           <div className="flex justify-end">
             <button
               type="button"
               onClick={onClose}
-              className="mr-2 px-4 py-2 rounded bg-primary hover:bg-secondary"
+              className="mr-2 px-4 py-2 rounded bg-primary hover:bg-primary w-1/2 hover:scale-105"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={isSubmitDisabled}
-              className={`px-4 py-2 rounded
+              className={`px-4 py-2 rounded w-1/2
                 bg-primary
                 ${
                   isSubmitDisabled
-                    ? "cursor-not-allowed"
-                    : "hover:bg-success"
+                    ? "cursor-not-allowed brightness-50 opacity-50 hover"
+                    : "hover:bg-success hover:scale-105"
                 }`}
             >
               Submit
             </button>
           </div>
-          <div className="mt-4 text-center text-danger">
+          <div className="mt-4 text-center font-semibold text-red-400">
             {disabledReason ? disabledReason : String.fromCharCode(160)}
           </div>
         </form>

@@ -44,23 +44,23 @@ const GroupJob: React.FC<GroupJobProps> = ({ setCurrentPage, fetchNui }) => {
     return (
         <div className="flex items-center">
             <div className="w-full">
-                <div className="mb-4 flex gap-x-2 text-xl px-2">
+                <div className="mb-4 flex gap-x-2 text-lg p-2">
                     <button
                         onClick={() => setCurrentPage("GroupDashboard")}
-                        className={`p-2 w-1/2 bg-primary rounded
-              ${!inGroup ? "cursor-not-allowed" : "hover:bg-secondary"}`}
+                        className={`py-6 w-1/2 bg-primary transition-all rounded-2xl shadow-sm
+              ${!inGroup ? "cursor-not-allowed" : "hover:bg-secondary hover:scale-105 hover:shadow-lg"}`}
                     >
                         Show Groups
                     </button>
                     <button
                         onClick={() => leaveGroup()}
-                        className={`px-4 py-2 w-1/2 bg-primary rounded
-              ${!inGroup ? "cursor-not-allowed" : "hover:bg-danger"}`}
+                        className={`p-6 w-1/2 bg-primary transition-all rounded-2xl shadow-sm
+              ${!inGroup ? "cursor-not-allowed" : "hover:bg-danger hover:scale-105 hover:shadow-lg"}`}
                     >
                         Leave Group
                     </button>
                 </div>
-                <span className="mb-6 text-2xl">
+                <span className="mb-6 text-xl">
                     {groupJobSteps && groupJobSteps.length > 0
                         ? "Here are the current group tasks"
                         : "No tasks available"}
@@ -84,7 +84,7 @@ const GroupJob: React.FC<GroupJobProps> = ({ setCurrentPage, fetchNui }) => {
                                     {/* <div className="text-sm mx-2">
                                       {step.isDone ? "1 / 1" : "0 / 1"}
                                     </div> */}
-                                    <div className="text-2xl">{step.name}</div>
+                                    <div className="text-lg">{step.name}</div>
                                 </div>
                             </div>
                         ))}

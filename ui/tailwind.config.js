@@ -17,17 +17,17 @@ module.exports = {
     createThemes({
       light: {
         text: '#030704',
-        background: '#fcfdfd',
-        primary: '#57b277',
+        background: '#e6ebed',
+        primary: '#fff',
         secondary: '#a7b7d7',
         accent: '#8981c5',
         danger: '#ff0000',
         success: '#8981c5',
       },
       dark: {
-        text: '#f8fcf9',
-        background: '#020303',
-        primary: '#4da86d',
+        text: '#e5e7eb',
+        background: '#0d1016',
+        primary: '#191c21',
         secondary: '#283858',
         accent: '#423a7e',
         danger: '#ff0000',
