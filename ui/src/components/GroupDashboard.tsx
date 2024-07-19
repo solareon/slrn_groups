@@ -109,7 +109,6 @@ const GroupDashboard = ({ setCurrentPage, fetchNui }) => {
               let isMember = group.id === inGroup;
 
               return (
-                // <div className="bg-secondary p-4 rounded-lg shadow-inner">
                 <div
                   key={index}
                   className={`p-4 bg-primary rounded-xl flex justify-between items-center mb-2 ${
@@ -122,7 +121,6 @@ const GroupDashboard = ({ setCurrentPage, fetchNui }) => {
                   }}
                 >
                   <div className="flex items-center text-lg">
-                    {/* <FontAwesomeIcon icon={faUsers} className="mr-2" size="xl"/> */}
                     <span>
                       {group.memberCount}
                     </span>
@@ -132,11 +130,9 @@ const GroupDashboard = ({ setCurrentPage, fetchNui }) => {
                   <div className="flex items-center">
                     <>
                       {isMember && renderIcons(isLeader, isMember, group)}
-
                     </>
                   </div>
                 </div>
-                // </div>
               );
             })}
           </>

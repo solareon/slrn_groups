@@ -81,9 +81,6 @@ const GroupJob: React.FC<GroupJobProps> = ({ setCurrentPage, fetchNui }) => {
                                     />
                                 </span>
                                 <div className="ml-8">
-                                    {/* <div className="text-sm mx-2">
-                                      {step.isDone ? "1 / 1" : "0 / 1"}
-                                    </div> */}
                                     <div className="text-lg">{step.name}</div>
                                 </div>
                             </div>

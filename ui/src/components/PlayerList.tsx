@@ -38,11 +38,7 @@ const PlayerList: React.FC = ({ onClose, fetchNui }) => {
                                     icon={faTrash}
                                     className="self-right hover:text-danger"
                                     size="sm"
-                                    onClick={() =>
-                                        removeGroupMember(
-                                            member
-                                        )
-                                    }
+                                    onClick={() => removeGroupMember(member)}
                                     />
                                 )}</span>
                             </div>

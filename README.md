@@ -1,19 +1,41 @@
 # slrn_groups
+![Lint](https://github.com/solareon/slrn_groups/actions/workflows/lint.yml/badge.svg)
+![CI](https://github.com/solareon/slrn_groups/actions/workflows/ci.yml/badge.svg)
+
 A group app for [lb-phone](https://lbphone.com/) the provides `qb-phone` compatible exports. This should work with most resources that expect a `qb-phone` style group.
 
 **QBOX/QB/ESX/ND/OX supported with bridge**
 
-![CI](https://github.com/solareon/slrn_groups/actions/workflows/ci.yml/badge.svg)
-![Lint](https://github.com/solareon/slrn_groups/actions/workflows/lint.yml/badge.svg)
+# Preview
 
-## Installation
+Light Mode             |  Dark Mode
+:-------------------------:|:-------------------------:
+![Light mode preview image](.github/assets/slrn_groups-light.gif)  |  ![Dark mode preview image](.github/assets/slrn_groups-dark.gif)
+
+
+# Installation
 Download the [release version](https://github.com/solareon/slrn_groups/releases) and copy to your server.
+
+# Customizing and building from source
+Download the latest commit and navigate to the ui folder
+```bash copy
+pnpm i
+```
+Then to preview the UI. You can also switch the UI path in the app registration (switch the commented lines) and then the game will display the preview running from vite.
+```bash copy
+pnpm start
+```
+Or to build for production
+```bash copy
+pnpm build
+```
 
 # Support
 - [Discord](https://discord.gg/TZFBBHvG6E)
 
 # Credits
 - [FjamZoo](https://github.com/FjamZoo) for rewriting groups layer
+- [MaxReinold](https://github.com/MaxReinold) for making a slick UI
 - [RijayJH](https://github.com/RijayJH/rj_groups-for-lb_phone) for original idea
 - [overextended](https://github.com/overextended) for ox_lib
 
