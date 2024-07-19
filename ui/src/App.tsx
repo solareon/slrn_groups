@@ -92,7 +92,7 @@ const App = () => {
   return (
     <AppProvider>
       <div
-        className="size-full text-center text-text gap-4 bg-background"
+        className="size-full text-center text-text gap-4 bg-background h-screen p-4 px-6"
         ref={appDiv}
         data-theme={theme}
       >
@@ -102,7 +102,7 @@ const App = () => {
           </button>
         )}
         <div>&nbsp;</div>
-        <div className="text-left text-4xl font-bold mt-6 mb-2 pt-2">Groups</div>
+        <div className="text-left text-4xl font-extralight mt-6 mb-2 pt-2">Groups</div>
         {currentPage === "GroupDashboard" && (
           <GroupDashboard
             setCurrentPage={setCurrentPage} fetchNui={fetchNui}
