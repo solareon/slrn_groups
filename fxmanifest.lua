@@ -22,8 +22,7 @@ shared_scripts {
 
 
 files {
-    "ui/dist/**/*",
-    "ui/public/**"
+    "ui/dist/**/*"
 }
 
 ui_page "ui/dist/index.html"
