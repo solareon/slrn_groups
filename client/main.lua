@@ -34,6 +34,7 @@ CreateThread(function()
             fixBlur = true,
             onUse = function()
                 lib.callback('slrn_groups:server:getSetupAppData', false, function(setupAppData)
+                    Wait(100) -- Allow UI to settle
                     sendCustomAppMessage('setupApp', setupAppData)
                     if setupAppData.groupStatus == 'IN_PROGRESS' then
                         sendCustomAppMessage('startJob', {})
