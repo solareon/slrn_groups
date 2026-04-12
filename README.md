@@ -6,6 +6,9 @@ A group app for [lb-phone](https://lbphone.com/) the provides `qb-phone` compati
 
 **QBOX/QB/ESX/ND/OX supported with bridge**
 
+# [Red40 Development](https://red40.dev/scripts)
+Like this resource and want to support further development? Checkout my store [Red40 Development](https://red40.dev/scripts)
+
 # Preview
 
 Light Mode             |  Dark Mode
