@@ -1,7 +1,5 @@
 if not lib then return end
 
-lib.versionCheck('solareon/slrn_groups')
-
 if GetCurrentResourceName() ~= 'slrn_groups' then
     lib.print.error('The resource needs to be named ^slrn_groups^7.')
     return
