@@ -1,31 +1,37 @@
 name: Lint
-on:
-  push:
-    paths:
-      - '*.lua'
-      - '.github/workflows/lint.yml'
-  pull_request_target:
-    paths:
-      - '*.lua'
-      - '.github/workflows/lint.yml'
+on: [push, pull_request_target]
 jobs:
-    lint:
-        name: Lint Resource
-        runs-on: ubuntu-latest
-        steps:
-            - uses: actions/checkout@v4
-              with:
-                  fetch-depth: 2
-                  ref: ${{ github.event.pull_request.head.sha }}
-            - name: Lint
-              uses: iLLeniumStudios/fivem-lua-lint-action@v2
-              with:
-                  capture: "junit.xml"
-                  args: "-t --formatter JUnit"
-                  extra_libs: ox_lib+mysql+qblocales+qbox+qbox_playerdata+qbox_lib
-            - name: Generate Lint Report
-              uses: mikepenz/action-junit-report@v4
-              with:
-                  report_paths: "**/junit.xml"
-                  check_name: Linting Report
-                  fail_on_failure: false
+  lint:
+    if: github.event.repository.default_branch == github.ref_name
+    name: Lint Resource
+    runs-on: ubuntu-latest
+    steps:
+      - name: Get App Token
+        uses: actions/create-github-app-token@v2
+        id: generate_token
+        with:
+          app-id: ${{ secrets.APP_ID }}
+          private-key: ${{ secrets.PRIVATE_KEY }}
+          owner: ${{ github.repository_owner }}
+          permission-checks: write
+
+      - uses: actions/checkout@v6
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+
+      - name: Lint
+        uses: Red40-Development/fivem-lua-lint-action@v3
+        with:
+          capture: "junit.xml"
+          args: "-t --formatter JUnit"
+          extra_libs: ox_lib+mysql+qblocales+qbox+qbox_playerdata+qbox_lib
+
+      - name: Generate Lint Report
+        if: always()
+        uses: mikepenz/action-junit-report@v6
+        with:
+          report_paths: "**/junit.xml"
+          check_annotations: true
+          check_name: Linting Report
+          fail_on_failure: false
+          token: ${{ steps.generate_token.outputs.token }}
