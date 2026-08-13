@@ -3,12 +3,16 @@ import { defineConfig } from 'vite';
 
 // https://vitejs.dev/config/
 export default defineConfig(( {command} ) => ({
-    base: command === 'build' ? '/ui/dist' : undefined,
+    base: './',
     define: {
         global: 'window'
     },
     build: {
-        sourcemap: false
+      outDir: 'build',
+      emptyOutDir: true,
+      minify: 'esbuild',
+      cssMinify: 'esbuild',
+      sourcemap: false
     },
     optimizeDeps: {
         esbuildOptions: {

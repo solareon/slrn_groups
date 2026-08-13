@@ -19,7 +19,6 @@
       "jsxImportSource": "react",
       "noEmit": false,
       "sourceMap": true,
-      "outDir": "../build/",
       "experimentalDecorators": true
   },
   "exclude": ["node_modules"],

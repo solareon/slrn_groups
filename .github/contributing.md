@@ -79,4 +79,4 @@ Below are conventions that you must follow when contributing code.
 
 Consider following the [Google JavaScript Style Guide](https://google.github.io/styleguide/jsguide.html) and the [Google TypeScript Style Guide](https://google.github.io/styleguide/tsguide.html).
 
-[discord link]: https://discord.gg/TZFBBHvG6E
+[discord link]: https://slrn.dev/support

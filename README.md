@@ -34,7 +34,7 @@ pnpm build
 ```
 
 # Support
-- [Discord](https://discord.gg/TZFBBHvG6E)
+- [Discord](https://slrn.dev/support)
 
 # Credits
 - [FjamZoo](https://github.com/FjamZoo) for rewriting groups layer

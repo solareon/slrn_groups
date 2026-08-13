@@ -1,45 +1,17 @@
 name: CI
+
 on:
   push:
-    paths:
-      - 'ui/**'
-      - '.github/workflows/ci.yml'
+    branches: [main]
   pull_request:
-    paths:
-      - 'ui/**'
-      - '.github/workflows/ci.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
 jobs:
-  build:
-    name: Build Test
-    runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: ui
-
-    steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      - name: Install pnpm
-        uses: pnpm/action-setup@v4
-        with:
-          version: 9
-
-      - name: Setup node environment
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20.x
-          cache: "pnpm"
-          cache-dependency-path: "ui/pnpm-lock.yaml"
-
-      - name: Install deps
-        run: pnpm install --frozen-lockfile
-        working-directory: ui
-
-      - name: Try build
-        run: pnpm build
-        working-directory: ui
-        env:
-          CI: true
+  ci:
+    uses: Red40-Development/red40-public-workflows/.github/workflows/ci.yml@v1
+    with:
+      # Optional. Defaults to the repository root, Node 24, and pnpm 11.
+      working_directory: web
