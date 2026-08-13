@@ -1,3 +1,7 @@
+allowBuilds:
+  '@fortawesome/fontawesome-common-types': true
+  '@fortawesome/fontawesome-svg-core': true
+  esbuild: true
 onlyBuiltDependencies:
   - '@fortawesome/fontawesome-common-types'
   - '@fortawesome/fontawesome-svg-core'
