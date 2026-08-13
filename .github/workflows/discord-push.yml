@@ -7,5 +7,7 @@ on:
 jobs:
   notify:
     uses: Red40-Development/red40-public-workflows/.github/workflows/discord-push.yml@v1
+    with:
+      avatar_url: "https://slrn.dev/SLRN_Development.png"
     secrets:
       DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
