@@ -6,3 +6,28 @@ body {
     box-sizing: border-box;
     visibility: hidden; /* DO NOT CHANGE, IMPORTANT!*/
 }
+
+html,
+body,
+#root {
+    height: 100%;
+}
+
+body {
+    overflow: hidden;
+    background: transparent;
+}
+
+.standalone-frame::before {
+    position: absolute;
+    top: 0.45rem;
+    left: 50%;
+    z-index: 45;
+    width: 5.5rem;
+    height: 1.35rem;
+    content: "";
+    transform: translateX(-50%);
+    border-radius: 9999px;
+    background: #050505;
+    pointer-events: none;
+}

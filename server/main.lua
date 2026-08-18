@@ -124,6 +124,7 @@ lib.callback.register('slrn_groups:server:getSetupAppData', function(source)
         inGroup = groupId or false,
         groupData = groupId and api.GetGroupMembersNames(groupId) or {},
         groupStages = groupId and api.GetGroupStages(groupId) or {},
+        groupJobSteps = groupId and api.GetGroupStages(groupId) or {},
         groupStatus = groupId and api.getJobStatus(groupId) or false,
     }
     return setupAppData

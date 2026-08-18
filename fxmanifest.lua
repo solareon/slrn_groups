@@ -25,6 +25,8 @@ files {
     "web/build/**/*"
 }
 
+ui_page 'web/build/index.html'
+
 
 dependency '/assetpacks'
 
